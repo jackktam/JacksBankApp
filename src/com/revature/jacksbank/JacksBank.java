@@ -37,7 +37,6 @@ public class JacksBank {
 				Employee tempEmployee = new Employee("employee","employee");
 				data.getUser().add(tempEmployee);
 				out.writeObject(data);
-				System.out.println("Serialized");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
