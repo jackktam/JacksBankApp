@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class JacksBank {
 	private static String fileName = "serialize/serbankdata.ser";
 	static File file = new File(fileName);
 	static BankDatabase data;
+	static Scanner scanner;
 	
 	public static void main(String[] args) {
 		start();
@@ -55,6 +57,9 @@ public class JacksBank {
 	         return;
 	      }
 		
+
+			scanner = new Scanner(System.in);
+		
 		//enters menu on completion of setup
 		menu();
 		
@@ -62,46 +67,56 @@ public class JacksBank {
 	
 	public static void menu() {
 		
-		shutDown();
+		System.out.println("Welcome to the main menu, please type in an option(1, 2, 3).");
+		System.out.println("1.Login \n2.Register \n3.Shut Down");
+		int selection = scanner.nextInt();
+		
+		while(selection!=1 && selection!=2 && selection!=3) {
+			System.out.println("Sorry invalid option, please try again.");
+			selection = scanner.nextInt();
+		}
+		
+		if(selection==1) {
+			login();
+		}else if(selection==2) {
+			register();
+		}else{
+			shutDown();
+		}
 		
 	}
 
-	public static void register() {
+	public static void login() {
 		
 	}
 	
-	public static void login() {
+	public static void register() {
 		
 	}
 
 	public static void shutDown() {
 		
-		boolean finished = false;
+		System.out.println("Are you sure you want to shutdown the system? Type in 1 to return to the main menu and 2 to shut down.");
+		int valid = scanner.nextInt();
 		
-		while(finished!=true) {
-			String valid = "";
-			System.out.println("Are you sure you want to shutdown the system? \nType in \"yes\" to exit and \"no\" to return to main menu:");
-			Scanner scanner = new Scanner(System.in);
-			valid = scanner.nextLine();
-			scanner.close();
-			switch(valid) {
-			case "yes": 
-				System.out.println("Thank you for using Jack's Bank, system exiting.");
-				try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
-					out.writeObject(data);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				finished = true;
-				break;
-			case "no":
-				System.out.println("Returning to main menu.");
-				menu();
-				break;
-			default:
-				System.out.println("Sorry invalid input, please try again.");
-			}
+		while(valid!=1 && valid!=2) {
+			System.out.println("Sorry invalid input, please try again.");
+			valid = scanner.nextInt();
 		}
+		
+		if(valid==1) {
+			System.out.println("Returning to main menu.");
+			menu();
+		}else {
+			System.out.println("Thank you for using Jack's Bank, system exiting.");
+			try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+				out.writeObject(data);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			scanner.close();
+		}
+
 	}
 	
 }
