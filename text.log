@@ -1,0 +1,4 @@
+2018-03-03 16:44:16 FATAL root:10 - Fatal log
+2018-03-03 16:44:16 ERROR root:14 - Error log
+2018-03-03 16:44:16 WARN  root:18 - Warn log
+2018-03-03 16:44:16 INFO  root:22 - Info log
