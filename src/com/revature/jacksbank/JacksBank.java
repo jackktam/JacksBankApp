@@ -196,7 +196,114 @@ public class JacksBank {
 	public static void adminMenu() {
 		
 		System.out.println("Admin Menu");
+		System.out.println("1.View Account Info\n2.View Account Application\n3.Withdraw Funds\n4.Deposit Funds\n5.Transfer Funds\n6.Delete Account\n7.Logout");
+		System.out.println("Please select a option by typing in a valid number(1-7).");
+		String choice = scanner.next();
 		
+		//error trapping invalid inputs until valid input is entered
+		while(!choice.equals("1") && !choice.equals("2") && !choice.equals("3") && !choice.equals("4") 
+				&& !choice.equals("5") && !choice.equals("6") && !choice.equals("7")) {
+			System.out.println("Invalid option, please try again");
+			choice = scanner.next();
+		}
+		
+		switch(choice) {
+		//View Account Info
+		case "1":
+			System.out.println("Please enter the ID of the account whose info you want to view or enter \"menu\" to return to admin menu.");
+			String accountID = scanner.next();
+			boolean accountParse = true;
+			
+			for(int j=0 ; j<accountID.length() ; j++) {
+				if(!Character.isDigit(accountID.charAt(j))) {//if current char is not a digit
+					accountParse = false;
+				}
+			}
+			
+			int index = -1;
+			if(accountParse==true) {
+				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(accountID), null), new Account(0, null));
+			}
+			
+			if(index<0) {
+				System.out.println("Specified account does not exist, we are now returning to admin menu.");
+				adminMenu();
+			}else {
+				data.getAccount().get(index).printInfo();
+				System.out.println("Enter anything to continue to admin menu.");
+				scanner.next();
+				System.out.println("Returning to admin menu.");
+				adminMenu();
+			}
+			break;
+		//View Account Application	
+		case "2":
+			if(!data.getApplication().isEmpty()) {//if there is a application
+				
+				//prints out oldest application and prompts for an action
+				data.getApplication().get(0).printInfo();
+				String option = scanner.next();
+				
+				//if input is invalid, prompts for input until it is valid
+				while(!option.equals("1") && !option.equals("2") && !option.equals("3")) {
+					System.out.println("Invalid option, please try again.");
+					option = scanner.next();
+				}
+				
+				if(option.equals("1")) {//approve account
+					
+					if(!data.getAccount().isEmpty()) {//if account list is not empty
+						//adds new account to account list with id 1 higher than account with highest id and application's specified users
+						data.getAccount().add(new Account(data.getAccount().get(data.getAccount().size()-1).getId()+1, data.getApplication().get(0).getUsers()));
+					}else {//if account list is empty
+						//adds new account to account list with id of 1 and application's specified users
+						data.getAccount().add(new Account(1, data.getApplication().get(0).getUsers()));
+					}
+					
+					//removes approved application from application list
+					data.getApplication().remove(0);
+					System.out.println("Application approved, returning to admin menu.");
+					adminMenu();
+					
+				}else if(option.equals("2")) { //deny account
+					//removes application from list of open applications
+					data.getApplication().remove(0);
+					System.out.println("Application denied, returning to admin menu.");
+					adminMenu();
+				}else { //return to employee menu
+					System.out.println("Returning to employee menu.");
+					adminMenu();
+				}
+				
+			}else {//no application currently
+				System.out.println("There are no applications to be viewed, returning to admin menu.");
+				adminMenu();
+			}
+			break;
+		//Withdraw Funds	
+		case "3":
+			
+			break;
+		//Deposit Funds	
+		case "4":
+			
+			break;
+		//Transfer Funds	
+		case "5":
+			
+			break;
+		//Delete account	
+		case "6":
+			
+			break;
+		//Logout	
+		case "7":
+			//clears current user and return to menu screen
+			System.out.println("Logging out and returning to main menu");
+			currentUser = null;
+			menu();
+			break;
+		}	
 	}
 	
 	public static void employeeMenu() {
@@ -231,7 +338,9 @@ public class JacksBank {
 				
 				if(tempUser instanceof Customer) {//if specified user is a customer, print info
 					((Customer)tempUser).printInfo();
-					System.out.println("Now returning to employee menu");
+					System.out.println("Enter anything to continue to employee menu.");
+					scanner.next();
+					System.out.println("Returning to employee menu.");
 					employeeMenu();
 				}else {//if specified user is not a customer, return to employee menu
 					System.out.println("Sorry target user's information is not viewable, returning to employee menu.");
@@ -246,8 +355,72 @@ public class JacksBank {
 		}else if(choice.equals("2")) {//View Account Info
 			System.out.println("Please enter the ID of the account whose info you want to view or enter \"menu\" to return to employee menu.");
 			String accountID = scanner.next();
-		}else if(choice.equals("3")) {//View Account Applications
+			boolean accountParse = true;
 			
+			for(int j=0 ; j<accountID.length() ; j++) {
+				if(!Character.isDigit(accountID.charAt(j))) {//if current char is not a digit
+					accountParse = false;
+				}
+			}
+			
+			int index = -1;
+			if(accountParse==true) {
+				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(accountID), null), new Account(0, null));
+			}
+			
+			if(index<0) {
+				System.out.println("Specified account does not exist, we are now returning to employee menu.");
+				employeeMenu();
+			}else {
+				data.getAccount().get(index).printInfo();
+				System.out.println("Enter anything to continue to employee menu.");
+				scanner.next();
+				System.out.println("Returning to employee menu.");
+				employeeMenu();
+			}
+			
+		}else if(choice.equals("3")) {//View Account Applications
+			if(!data.getApplication().isEmpty()) {
+				
+				//prints out oldest application and prompts for an action
+				data.getApplication().get(0).printInfo();
+				String option = scanner.next();
+				
+				//if input is invalid, prompts for input until it is valid
+				while(!option.equals("1") && !option.equals("2") && !option.equals("3")) {
+					System.out.println("Invalid option, please try again.");
+					option = scanner.next();
+				}
+				
+				if(option.equals("1")) {//approve account
+					
+					if(!data.getAccount().isEmpty()) {//if account list is not empty
+						//adds new account to account list with id 1 higher than account with highest id and application's specified users
+						data.getAccount().add(new Account(data.getAccount().get(data.getAccount().size()-1).getId()+1, data.getApplication().get(0).getUsers()));
+					}else {//if account list is empty
+						//adds new account to account list with id of 1 and application's specified users
+						data.getAccount().add(new Account(1, data.getApplication().get(0).getUsers()));
+					}
+					
+					//removes approved application from application list
+					data.getApplication().remove(0);
+					System.out.println("Application approved, returning to employee menu.");
+					employeeMenu();
+					
+				}else if(option.equals("2")) { //deny account
+					//removes application from list of open applications
+					data.getApplication().remove(0);
+					System.out.println("Application denied, returning to employee menu.");
+					employeeMenu();
+				}else { //return to employee menu
+					System.out.println("Returning to employee menu.");
+					employeeMenu();
+				}
+				
+			}else {//no application currently
+				System.out.println("There are no applications to be viewed, returning to employee menu.");
+				employeeMenu();
+			}
 		}else {//logout
 			//clears current user and return to menu screen
 			System.out.println("Logging out and returning to main menu");

@@ -2,7 +2,6 @@ package bankobjects;
 
 import java.io.Serializable;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Account implements Serializable, Comparator<Account> {
@@ -78,6 +77,16 @@ public class Account implements Serializable, Comparator<Account> {
 		
 		this.balance = this.balance+amount;
 		
+	}
+	
+	public void printInfo() {
+		System.out.println("Account ID: " + this.id);
+		System.out.println("Owners\n======================");
+		for(String s: owners) {
+			System.out.println(s);
+		}
+		System.out.println("======================");
+		System.out.println("Account Balance: $" + this.balance);
 	}
 	
 }
