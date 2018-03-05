@@ -1,6 +1,9 @@
 package bankobjects;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Customer extends User implements EditAccount, Serializable{
 
@@ -32,7 +35,9 @@ public class Customer extends User implements EditAccount, Serializable{
 		return false;
 	}
 	
-	public void apply(String ownName, String[] ... username) {
+	public boolean apply(Scanner scanner, BankDatabase base) {
+		
+		return false;
 		
 	}
 

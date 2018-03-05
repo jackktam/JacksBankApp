@@ -14,12 +14,22 @@ public class BankDatabase implements Serializable{
 	
 	private List<User> user;
 	private List<Account> account;
+	private List<Application> application;
 	private HashMap<String, String> loginInfo;
 
 	public BankDatabase() {
 		user = new LinkedList<User>();
 		account = new ArrayList<Account>();
+		application = new LinkedList<Application>();
 		loginInfo = new HashMap<>();
+	}
+
+	public List<Application> getApplication() {
+		return application;
+	}
+
+	public void setApplication(List<Application> application) {
+		this.application = application;
 	}
 
 	public List<User> getUser() {
