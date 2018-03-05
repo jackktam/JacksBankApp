@@ -213,10 +213,39 @@ public class JacksBank {
 		}
 		
 		if(choice.equals("1")) {//View Customer info
-			System.out.println("Please enter the username of the customer whose info you want to view.");
-			String customerName = scanner.next();
-		}else if(choice.equals("2")) {//View Account Info
 			
+			//prompts for username of customer info that you want to view
+			System.out.println("Please enter the username of the customer whose info you want to view or enter \"menu\" to return to employee menu.");
+			String customerName = scanner.next();
+			
+			if(data.getLoginInfo().containsKey(customerName)) {//if user name is a valid user
+				
+				User tempUser = new User("","");
+				
+				//goes through list of users to find the one with correct user name
+				for(int i=0 ; !tempUser.getUsername().equals(customerName) ; i++) {
+					if(data.getUser().get(i).getUsername().equals(customerName)) {//once found, sets that user to the temp user
+						tempUser = data.getUser().get(i);
+					}
+				}
+				
+				if(tempUser instanceof Customer) {//if specified user is a customer, print info
+					((Customer)tempUser).printInfo();
+					System.out.println("Now returning to employee menu");
+					employeeMenu();
+				}else {//if specified user is not a customer, return to employee menu
+					System.out.println("Sorry target user's information is not viewable, returning to employee menu.");
+					employeeMenu();
+				}
+				
+			}else {//if not valid user name
+				System.out.println("User not found, returning to employee menu.");
+				employeeMenu();
+			}
+			
+		}else if(choice.equals("2")) {//View Account Info
+			System.out.println("Please enter the ID of the account whose info you want to view or enter \"menu\" to return to employee menu.");
+			String accountID = scanner.next();
 		}else if(choice.equals("3")) {//View Account Applications
 			
 		}else {//logout

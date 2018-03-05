@@ -1,6 +1,8 @@
 package bankobjects;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Customer extends User implements EditAccount, Serializable{
@@ -9,9 +11,12 @@ public class Customer extends User implements EditAccount, Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -2412725884484869873L;
+	
+	private List<Integer> ownedAccounts;
 
 	public Customer(String username, String password) {
 		super(username, password);
+		ownedAccounts = new LinkedList<>();
 		// TODO Auto-generated constructor stub
 	}
 
@@ -37,6 +42,13 @@ public class Customer extends User implements EditAccount, Serializable{
 		
 		return false;
 		
+	}
+	
+	public void printInfo() {
+		System.out.println("Customer username: " + this.username + "\nCustomer password: " + this.password);
+		for(Integer i: ownedAccounts) {
+			System.out.println("Customer owns the account with Account ID: " + i);
+		}
 	}
 
 }
