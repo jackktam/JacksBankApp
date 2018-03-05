@@ -4,12 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -205,6 +202,29 @@ public class JacksBank {
 	public static void employeeMenu() {
 		
 		System.out.println("Employee Menu");
+		System.out.println("1.View Customer Info\n2.View Account Info\n3.Approve/Deny Account Applcations\n4.Logout");
+		System.out.println("Please select a option by typing in a valid number(1-4).");
+		String choice = scanner.next();
+		
+		//error trapping invalid inputs until valid input is entered
+		while(!choice.equals("1") && !choice.equals("2") && !choice.equals("3") && !choice.equals("4")) {
+			System.out.println("Invalid option, please try again");
+			choice = scanner.next();
+		}
+		
+		if(choice.equals("1")) {//View Customer info
+			System.out.println("Please enter the username of the customer whose info you want to view.");
+			String customerName = scanner.next();
+		}else if(choice.equals("2")) {//View Account Info
+			
+		}else if(choice.equals("3")) {//View Account Applications
+			
+		}else {//logout
+			//clears current user and return to menu screen
+			System.out.println("Logging out and returning to main menu");
+			currentUser = null;
+			menu();
+		}
 		
 	}
 	
