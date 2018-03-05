@@ -207,9 +207,10 @@ public class JacksBank {
 			choice = scanner.next();
 		}
 		
-		switch(choice) {
-		//View Account Info
-		case "1":
+		
+		
+		if(choice.equals("1")) {//View Account Info
+			
 			System.out.println("Please enter the ID of the account whose info you want to view or enter \"menu\" to return to admin menu.");
 			String accountID = scanner.next();
 			boolean accountParse = true;
@@ -235,9 +236,9 @@ public class JacksBank {
 				System.out.println("Returning to admin menu.");
 				adminMenu();
 			}
-			break;
-		//View Account Application	
-		case "2":
+			
+		}else if(choice.equals("2")) {//View Account Application
+			
 			if(!data.getApplication().isEmpty()) {//if there is a application
 				
 				//prints out oldest application and prompts for an action
@@ -279,30 +280,216 @@ public class JacksBank {
 				System.out.println("There are no applications to be viewed, returning to admin menu.");
 				adminMenu();
 			}
-			break;
-		//Withdraw Funds	
-		case "3":
 			
-			break;
-		//Deposit Funds	
-		case "4":
+		}else if(choice.equals("3")) {//Withdraw Funds
+			//prompts for account number and amount of money they want to withdrawn or return to menu
+			System.out.println("Please enter the account number of the account you want to withdrawn from.");
+			String account = scanner.next();
+			System.out.println("Please enter an amount of cash to withdraw in the following format(d.cc, dd.cc, etc... or d, dd, ddd, etc...) or enter \"0\" to go back to the admin menu.");
+			String amount = scanner.next();
+			boolean amountParse = true;
+			boolean accountParse = true;
 			
-			break;
-		//Transfer Funds	
-		case "5":
+			double doubleAmount = 0;
 			
-			break;
-		//Delete account	
-		case "6":
+			for(int i=0 ; i<amount.length() ; i++) {//check if amount can be converted to correctly formated double
+				if(!Character.isDigit(amount.charAt(i))) {//if current char is not a digit
+					if(amount.charAt(i)=='.' && i==amount.length()-3) {//if it is a '.' and in correct spot nothing happens
+						
+					}else {//else marked as not parseable
+						amountParse = false;
+					}
+				}
+			}
 			
-			break;
-		//Logout	
-		case "7":
+			if(amountParse) {
+				doubleAmount = Double.parseDouble(amount);
+			}
+			
+			for(int j=0 ; j<account.length() ; j++) {
+				if(!Character.isDigit(account.charAt(j))) {//if current char is not a digit
+					accountParse = false;
+				}
+			}
+			
+			int index = -1 ;
+			
+			if(accountParse==true) {
+				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account), null), new Account(0, null));
+			}
+			
+			if(amount.equals("0")) {//if admin menu is selected
+				System.out.println("Returning to admin menu.");
+				adminMenu();
+			}else if(amountParse==false) {//amount is not valid input
+				System.out.println("Sorry invalid amount entered or format is not correct, returning to admin menu.");
+				adminMenu();
+			}else if(index<0) {//if account id not found
+				System.out.println("Sorry account id not found, returning to admin menu.");
+				adminMenu();
+			}else if(data.getAccount().get(index).negativeBalance(doubleAmount)) {//if not enough funds
+				System.out.println("Sorry there is not have enough funds in this account, returning to admin menu.");
+				adminMenu();
+			}else {//permitted access with sufficient funds
+				data.getAccount().get(index).withdraw(doubleAmount);
+				System.out.println(amount + "withdrawn from account " + account + ", returning to admin menu.");
+				adminMenu();
+			}
+		}else if(choice.equals("4")) {//Deposit Funds
+			
+			//prompts for account number and amount of money they want to deposit or return to menu
+			System.out.println("Please enter the account number of the account you want to deposit to.");
+			String account = scanner.next();
+			System.out.println("Please enter an amount of cash to deposit in the following format(d.cc, dd.cc, etc... or d, dd, ddd, etc...) or enter \"0\" to go back to the admin menu.");
+			String amount = scanner.next();
+			boolean amountParse = true;
+			boolean accountParse = true;
+			
+			double doubleAmount = 0;
+			
+			for(int i=0 ; i<amount.length() ; i++) {//check if amount can be converted to correctly formated double
+				if(!Character.isDigit(amount.charAt(i))) {//if current char is not a digit
+					if(amount.charAt(i)=='.' && i==amount.length()-3) {//if it is a '.' and in correct spot nothing happens
+						
+					}else {//else marked as not parseable
+						amountParse = false;
+					}
+				}
+			}
+			
+			if(amountParse) {
+				doubleAmount = Double.parseDouble(amount);
+			}
+			
+			for(int j=0 ; j<account.length() ; j++) {
+				if(!Character.isDigit(account.charAt(j))) {//if current char is not a digit
+					accountParse = false;
+				}
+			}
+			
+			int index = -1 ;
+			
+			if(accountParse==true) {
+				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account), null), new Account(0, null));
+			}
+			
+			if(amount.equals("0")) {//if admin menu is selected
+				System.out.println("Returning to admin menu.");
+				adminMenu();
+			}else if(amountParse==false) {//amount is not valid input
+				System.out.println("Sorry invalid amount entered or format is not correct, returning to admin menu.");
+				adminMenu();
+			}else if(index<0) {//if account id not found
+				System.out.println("Sorry account id not found, returning to admin menu.");
+				adminMenu();
+			}else {//permitted access with sufficient funds
+				data.getAccount().get(index).deposit(doubleAmount);
+				System.out.println(amount + "deposited to account " + account + ", returning to admin menu.");
+				adminMenu();
+			}
+			
+		}else if(choice.equals("5")) {//Transfer Funds	
+			
+			System.out.println("Please enter the account id of the account you want to transfer funds from.");
+			String account1 = scanner.next();
+			System.out.println("Please enter the account id of the account you want to transfer funds to.");
+			String account2 = scanner.next();
+			System.out.println("Please enter the amount of funds you want to transfer in the correct format(d.cc, dd.cc, etc... or d, dd, ddd, etc...) or enter 0 to retun to main menu.");
+			String amount = scanner.next();
+			
+			boolean amountParse = true;
+			boolean account1Parse = true;
+			boolean account2Parse = true;
+			
+			double doubleAmount = 0;
+			
+			for(int i=0 ; i<amount.length() ; i++) {//check if amount can be converted to correctly formated double
+				if(!Character.isDigit(amount.charAt(i))) {//if current char is not a digit
+					if(amount.charAt(i)=='.' && i==amount.length()-3) {//if it is a '.' and in correct spot nothing happens
+						
+					}else {//else marked as not parseable
+						amountParse = false;
+					}
+				}
+			}
+			
+			if(amountParse) {
+				doubleAmount = Double.parseDouble(amount);
+			}
+			
+			for(int j=0 ; j<account1.length() ; j++) {
+				if(!Character.isDigit(account1.charAt(j))) {//if current char is not a digit
+					account1Parse = false;
+				}
+			}
+			
+			for(int j=0 ; j<account2.length() ; j++) {
+				if(!Character.isDigit(account2.charAt(j))) {//if current char is not a digit
+					account2Parse = false;
+				}
+			}
+			
+			int index1 = -1;
+			int index2 = -1;
+			
+			if(account1Parse==true) {//finds index of account 1 if parseable
+				index1 = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account1), null), new Account(0, null));
+			}
+			if(account2Parse==true) {//finds index of account 2 if parseable
+				index2 = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account2), null), new Account(0, null));
+			}
+			
+			if(amount.equals("0")) {//if customer menu is selected
+				System.out.println("Returning to admin menu.");
+				adminMenu();
+			}else if(amountParse==false) {//amount is not valid input
+				System.out.println("Sorry invalid amount entered or format is not correct, returning to admin menu.");
+				adminMenu();
+			}else if(index1<0 || index2<0) {//if account id not found
+				System.out.println("Sorry one or more account ids not found, returning to admin menu.");
+				adminMenu();
+			}else {//permitted access with sufficient funds
+				data.getAccount().get(index1).withdraw(doubleAmount);
+				data.getAccount().get(index2).deposit(doubleAmount);
+				System.out.println(amount + "transfered from account " + account1 + " to account " + account2 + ", returning to admin menu.");
+				adminMenu();
+			}
+			
+		}else if(choice.equals("6")) {//Delete account
+			
+			System.out.println("Please enter the ID of the account you want to delete or enter 0 to return to admin menu.");
+			String account = scanner.next();
+			boolean parseable = true;
+			
+			for(int i=0 ; i<account.length() ; i++) {
+				if(!Character.isDigit(account.charAt(i))) {
+					parseable = false;
+				}
+			}
+			
+			int index = -1;
+			
+			if(parseable==true) {//if 
+				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account), null), new Account(0, null));
+			}
+			
+			if(account.equals("0")) {//if returning to admin menu was selected
+				System.out.println("Returning to admin menu.");
+				adminMenu();
+			}else if(index<=0){//if account not found
+				System.out.println("Account not found, returning to admin menu.");
+				adminMenu();
+			}else {
+				data.getAccount().remove(index);
+				System.out.println("Account ID " + account + " deleted, returning to admin menu.");
+				adminMenu();
+			}
+			
+		}else {//Logout
 			//clears current user and return to menu screen
 			System.out.println("Logging out and returning to main menu");
-			currentUser = null;
+			currentUser = new User("","");
 			menu();
-			break;
 		}	
 	}
 	
@@ -424,7 +611,7 @@ public class JacksBank {
 		}else {//logout
 			//clears current user and return to menu screen
 			System.out.println("Logging out and returning to main menu");
-			currentUser = null;
+			currentUser = new User("","");
 			menu();
 		}
 		
@@ -697,7 +884,7 @@ public class JacksBank {
 			
 			//clears current user and return to menu screen
 			System.out.println("Logging out and returning to main menu");
-			currentUser = null;
+			currentUser = new User("","");
 			menu();
 			
 		}
