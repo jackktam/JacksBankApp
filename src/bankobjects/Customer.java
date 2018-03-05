@@ -1,8 +1,6 @@
 package bankobjects;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Customer extends User implements EditAccount, Serializable{

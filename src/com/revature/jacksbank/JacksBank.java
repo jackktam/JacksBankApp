@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -286,20 +287,191 @@ public class JacksBank {
 			
 		}else if(choice.equals("2")) {//if withdrawing funds is selected
 			
+			//prompts for account number and amount of money they want to withdrawn or return to menu
 			System.out.println("Please enter the account number of the account you want to withdrawn from.");
 			String account = scanner.next();
-			System.out.println("Please enter an amount of cash to withdraw and an account you own or enter \"0\" to go back to the customer menu.");
+			System.out.println("Please enter an amount of cash to withdraw in the following format(d.cc, dd.cc, etc... or d, dd, ddd, etc...) or enter \"0\" to go back to the customer menu.");
 			String amount = scanner.next();
+			boolean amountParse = true;
+			boolean accountParse = true;
+			
+			double doubleAmount = 0;
+			
+			for(int i=0 ; i<amount.length() ; i++) {//check if amount can be converted to correctly formated double
+				if(!Character.isDigit(amount.charAt(i))) {//if current char is not a digit
+					if(amount.charAt(i)=='.' && i==amount.length()-3) {//if it is a '.' and in correct spot nothing happens
+						
+					}else {//else marked as not parseable
+						amountParse = false;
+					}
+				}
+			}
+			
+			if(amountParse) {
+				doubleAmount = Double.parseDouble(amount);
+			}
+			
+			for(int j=0 ; j<account.length() ; j++) {
+				if(!Character.isDigit(account.charAt(j))) {//if current char is not a digit
+					accountParse = false;
+				}
+			}
+			
+			int index = -1 ;
+			
+			if(accountParse==true) {
+				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account), null), new Account(0, null));
+			}
+			
+			if(amount.equals("0")) {//if customer menu is selected
+				System.out.println("Returning to customer menu.");
+				customerMenu();
+			}else if(amountParse==false) {//amount is not valid input
+				System.out.println("Sorry invalid amount entered or format is not correct, returning to customer menu.");
+				customerMenu();
+			}else if(index<0) {//if account id not found
+				System.out.println("Sorry account id not found, returning to customer menu.");
+				customerMenu();
+			}else if(data.getAccount().get(index).allowedAccess(currentUser.getUsername())==false) {//if account does not belong to user
+				System.out.println("Sorry you do not have access to this account, returning to customer menu.");
+				customerMenu();
+			}else if(data.getAccount().get(index).negativeBalance(doubleAmount)) {//if not enough funds
+				System.out.println("Sorry you do not have enough funds in this account, returning to customer menu.");
+				customerMenu();
+			}else {//permitted access with sufficient funds
+				data.getAccount().get(index).withdraw(doubleAmount);
+				System.out.println(amount + "withdrawn from account " + account + ", returning to customer menu.");
+				customerMenu();
+			}
 			
 		}else if(choice.equals("3")) {//if depositing funds is selected
 			
+			//prompts for account number and amount of money they want to deposit or return to menu
+			System.out.println("Please enter the account number of the account you want to deposit to.");
+			String account = scanner.next();
+			System.out.println("Please enter an amount of cash to deposit in the following format(d.cc, dd.cc, etc... or d, dd, ddd, etc...) or enter \"0\" to go back to the customer menu.");
+			String amount = scanner.next();
+			boolean amountParse = true;
+			boolean accountParse = true;
 			
+			double doubleAmount = 0;
+			
+			for(int i=0 ; i<amount.length() ; i++) {//check if amount can be converted to correctly formated double
+				if(!Character.isDigit(amount.charAt(i))) {//if current char is not a digit
+					if(amount.charAt(i)=='.' && i==amount.length()-3) {//if it is a '.' and in correct spot nothing happens
+						
+					}else {//else marked as not parseable
+						amountParse = false;
+					}
+				}
+			}
+			
+			if(amountParse) {
+				doubleAmount = Double.parseDouble(amount);
+			}
+			
+			for(int j=0 ; j<account.length() ; j++) {
+				if(!Character.isDigit(account.charAt(j))) {//if current char is not a digit
+					accountParse = false;
+				}
+			}
+			
+			int index = -1 ;
+			
+			if(accountParse==true) {
+				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account), null), new Account(0, null));
+			}
+			
+			if(amount.equals("0")) {//if customer menu is selected
+				System.out.println("Returning to customer menu.");
+				customerMenu();
+			}else if(amountParse==false) {//amount is not valid input
+				System.out.println("Sorry invalid amount entered or format is not correct, returning to customer menu.");
+				customerMenu();
+			}else if(index<0) {//if account id not found
+				System.out.println("Sorry account id not found, returning to customer menu.");
+				customerMenu();
+			}else if(data.getAccount().get(index).allowedAccess(currentUser.getUsername())==false) {//if account does not belong to user
+				System.out.println("Sorry you do not have access to this account, returning to customer menu.");
+				customerMenu();
+			}else {//permitted access with sufficient funds
+				data.getAccount().get(index).deposit(doubleAmount);
+				System.out.println(amount + "deposited to account " + account + ", returning to customer menu.");
+				customerMenu();
+			}
 			
 		}else if(choice.equals("4")) {//if transferring funds is selected
 			
+			System.out.println("Please enter the account id of the account you want to transfer funds from.");
+			String account1 = scanner.next();
+			System.out.println("Please enter the account id of the account you want to transfer funds to.");
+			String account2 = scanner.next();
+			System.out.println("Please enter the amount of funds you want to transfer in the correct format(d.cc, dd.cc, etc... or d, dd, ddd, etc...) or enter 0 to retun to main menu.");
+			String amount = scanner.next();
 			
+			boolean amountParse = true;
+			boolean account1Parse = true;
+			boolean account2Parse = true;
 			
-		}else {//if log out is selected
+			double doubleAmount = 0;
+			
+			for(int i=0 ; i<amount.length() ; i++) {//check if amount can be converted to correctly formated double
+				if(!Character.isDigit(amount.charAt(i))) {//if current char is not a digit
+					if(amount.charAt(i)=='.' && i==amount.length()-3) {//if it is a '.' and in correct spot nothing happens
+						
+					}else {//else marked as not parseable
+						amountParse = false;
+					}
+				}
+			}
+			
+			if(amountParse) {
+				doubleAmount = Double.parseDouble(amount);
+			}
+			
+			for(int j=0 ; j<account1.length() ; j++) {
+				if(!Character.isDigit(account1.charAt(j))) {//if current char is not a digit
+					account1Parse = false;
+				}
+			}
+			
+			for(int j=0 ; j<account2.length() ; j++) {
+				if(!Character.isDigit(account2.charAt(j))) {//if current char is not a digit
+					account2Parse = false;
+				}
+			}
+			
+			int index1 = -1;
+			int index2 = -1;
+			
+			if(account1Parse==true) {//finds index of account 1 if parseable
+				index1 = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account1), null), new Account(0, null));
+			}
+			if(account2Parse==true) {//finds index of account 2 if parseable
+				index2 = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account2), null), new Account(0, null));
+			}
+			
+			if(amount.equals("0")) {//if customer menu is selected
+				System.out.println("Returning to customer menu.");
+				customerMenu();
+			}else if(amountParse==false) {//amount is not valid input
+				System.out.println("Sorry invalid amount entered or format is not correct, returning to customer menu.");
+				customerMenu();
+			}else if(index1<0 || index2<0) {//if account id not found
+				System.out.println("Sorry one or more account ids not found, returning to customer menu.");
+				customerMenu();
+			}else if(data.getAccount().get(index1).allowedAccess(currentUser.getUsername())==false 
+					|| data.getAccount().get(index2).allowedAccess(currentUser.getUsername())==false) {//if account does not belong to user
+				System.out.println("Sorry you do not have access to one of the accounts, returning to customer menu.");
+				customerMenu();
+			}else {//permitted access with sufficient funds
+				data.getAccount().get(index1).withdraw(doubleAmount);
+				data.getAccount().get(index2).deposit(doubleAmount);
+				System.out.println(amount + "transfered from account " + account1 + " to account " + account2 + ", returning to customer menu.");
+				customerMenu();
+			}
+			
+		}else {//if log out is selected1
 			
 			//clears current user and return to menu screen
 			System.out.println("Logging out and returning to main menu");
