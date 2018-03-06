@@ -3,7 +3,6 @@ package bankobjects;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
 
 public class Customer extends User implements EditAccount, Serializable{
 
@@ -36,12 +35,6 @@ public class Customer extends User implements EditAccount, Serializable{
 	public boolean transfer(String currentAccount, String targetAccount, double value) {
 		// TODO Auto-generated method stub
 		return false;
-	}
-	
-	public boolean apply(Scanner scanner, BankDatabase base) {
-		
-		return false;
-		
 	}
 	
 	public void printInfo() {
