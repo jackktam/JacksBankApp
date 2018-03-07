@@ -11,13 +11,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.revature.util.LoggingUtil;
+
 public class BankUserInterface {
 	
 	private static String fileName = "serialize/serbankdata.ser";
-	static File file = new File(fileName);
-	public static BankDatabase data;
-	static Scanner scanner;
-	static User currentUser = new User("", "");
+	private static File file = new File(fileName);
+	private static BankDatabase data;
+	private static Scanner scanner;
+	private static User currentUser = new User("", "");
 	
 	
     public static void start() {
@@ -58,18 +60,17 @@ public class BankUserInterface {
 	private static void menu() {
 		
 		//default text that shows every time menu is called
-		System.out.println("=========================");
-		System.out.println("Main Menu");  
+		System.out.println("\n\n\n=========================\nMain Menu");  
 		System.out.println("1.Login \n2.Register \n3.Shut Down");
 		System.out.println("=========================");
 		System.out.println("Please type in an option(1-3)");
-		String selection = scanner.next();
+		String selection = scanner.nextLine();
 		
 		//if input is not one of the valid options catches it and prompts a new input
 		while(!selection.equals("1") && !selection.equals("2") && !selection.equals("3")) {
 			System.out.println(selection);
 			System.out.println("Sorry invalid option, please try again.");
-			selection = scanner.next();
+			selection = scanner.nextLine();
 		}
 		
 		//routes to selected menu selection
@@ -89,9 +90,16 @@ public class BankUserInterface {
 		//prompts for a username and password or return to main menu option
 		System.out.println("Please enter a username and its corresponding password to continue or type in \"menu\" as username and any not empty password to return to main menu.");
 		System.out.print("Username: ");
-		String username = scanner.next();	
+		String username = scanner.nextLine();	
+		while(username.length()==0) {
+			username = scanner.nextLine();
+		}
+		
 		System.out.print("Password: ");
-		String password = scanner.next();
+		String password = scanner.nextLine();
+		while(password.length()==0) {
+			password = scanner.nextLine();
+		}
 		//if "menu" is entered as the username, they are returned to the main menu
 		if(username.equals("menu")) {
 			
@@ -127,9 +135,16 @@ public class BankUserInterface {
 		//prompts user to register with a user name and a password or return to main menu
 		System.out.println("Please choose a username and a password or return to the main menu by typing in menu as your username");
 		System.out.print("Username: ");
-		String username = scanner.next();	
+		String username = scanner.nextLine();
+		while(username.length()==0) {
+			username = scanner.nextLine();
+		}
+		
 		System.out.print("Password: ");
-		String password = scanner.next();
+		String password = scanner.nextLine();
+		while(password.length()==0) {
+			password = scanner.nextLine();
+		}
 		
 		//if "menu" is entered as the user name, they are returned to the main menu
 		if(username.equals("menu")) {
@@ -157,12 +172,12 @@ public class BankUserInterface {
 		
 		//asks user if he/she is sure about exiting system
 		System.out.println("Are you sure you want to shutdown the system? Type in 1 to return to the main menu and 2 to shut down.");		
-		String valid = scanner.next();
+		String valid = scanner.nextLine();
 		
 		//catches input if invalid and prompts for new input
 		while(!valid.equals("1") && !valid.equals("2")) {
 			System.out.println("Sorry invalid input, please try again.");
-			valid = scanner.next();
+			valid = scanner.nextLine();
 		}
 		
 		//returns to main menu if 1 is selected
@@ -184,16 +199,16 @@ public class BankUserInterface {
 	
 	private static void adminMenu() {
 		
-		System.out.println("Admin Menu");
-		System.out.println("1.View Account Info\n2.View Account Application\n3.Withdraw Funds\n4.Deposit Funds\n5.Transfer Funds\n6.Delete Account\n7.Logout");
+		System.out.println("\n\n\n===============\nAdmin Menu");
+		System.out.println("1.View Account Info\n2.View Account Application\n3.Withdraw Funds\n4.Deposit Funds\n5.Transfer Funds\n6.Delete Account\n7.Logout\n===============");
 		System.out.println("Please select a option by typing in a valid number(1-7).");
-		String choice = scanner.next();
+		String choice = scanner.nextLine();
 		
 		//error trapping invalid inputs until valid input is entered
 		while(!choice.equals("1") && !choice.equals("2") && !choice.equals("3") && !choice.equals("4") 
 				&& !choice.equals("5") && !choice.equals("6") && !choice.equals("7")) {
 			System.out.println("Invalid option, please try again");
-			choice = scanner.next();
+			choice = scanner.nextLine();
 		}
 		
 		
@@ -201,7 +216,10 @@ public class BankUserInterface {
 		if(choice.equals("1")) {//View Account Info
 			
 			System.out.println("Please enter the ID of the account whose info you want to view or enter \"menu\" to return to admin menu.");
-			String accountID = scanner.next();
+			String accountID = scanner.nextLine();
+			while(accountID.length()==0) {
+				accountID = scanner.nextLine();
+			}
 			boolean accountParse = true;
 			
 			for(int j=0 ; j<accountID.length() ; j++) {
@@ -221,7 +239,7 @@ public class BankUserInterface {
 			}else {
 				data.getAccount().get(index).printInfo();
 				System.out.println("Enter anything to continue to admin menu.");
-				scanner.next();
+				scanner.nextLine();
 				System.out.println("Returning to admin menu.");
 				adminMenu();
 			}
@@ -232,20 +250,55 @@ public class BankUserInterface {
 				
 				//prints out oldest application and prompts for an action
 				data.getApplication().get(0).printInfo();
-				String option = scanner.next();
+				String option = scanner.nextLine();
 				
 				//if input is invalid, prompts for input until it is valid
 				while(!option.equals("1") && !option.equals("2") && !option.equals("3")) {
 					System.out.println("Invalid option, please try again.");
-					option = scanner.next();
+					option = scanner.nextLine();
 				}
 				
 				if(option.equals("1")) {//approve account
 					
 					if(!data.getAccount().isEmpty()) {//if account list is not empty
+						
+						int newID = data.getAccount().get(data.getAccount().size()-1).getId()+1;
+						
+						for(int i=0 ; i<data.getApplication().get(0).getUsers().size() ; i++) {//goes through list of users in application
+							
+							User tempUser = new User("","");
+							
+							//goes through list of users to find the one with correct user name
+							for(int j=0 ; !tempUser.getUsername().equals(data.getApplication().get(0).getUsers().get(i)) ; j++) {
+								if(data.getUser().get(j).getUsername().equals(data.getApplication().get(0).getUsers().get(i))) {//once found, sets that user to the temp user
+									tempUser = data.getUser().get(j);
+									((Customer)tempUser).getOwnedAccounts().add(newID);
+								}
+							}
+							
+						}
+						
 						//adds new account to account list with id 1 higher than account with highest id and application's specified users
-						data.getAccount().add(new Account(data.getAccount().get(data.getAccount().size()-1).getId()+1, data.getApplication().get(0).getUsers()));
+						data.getAccount().add(new Account(newID, data.getApplication().get(0).getUsers()));
+						LoggingUtil.logInfo("Account " + newID + " created with account balance of $0.");
+						
 					}else {//if account list is empty
+						
+						int newID = 1;
+						
+						for(int i=0 ; i<data.getApplication().get(0).getUsers().size() ; i++) {//goes through list of users in application
+							
+							User tempUser = new User("","");
+							
+							//goes through list of users to find the one with correct user name
+							for(int j=0 ; !tempUser.getUsername().equals(data.getApplication().get(0).getUsers().get(i)) ; j++) {
+								if(data.getUser().get(j).getUsername().equals(data.getApplication().get(0).getUsers().get(i))) {//once found, sets that user to the temp user
+									tempUser = data.getUser().get(j);
+									((Customer)tempUser).getOwnedAccounts().add(newID);
+								}
+							}
+							
+						}
 						//adds new account to account list with id of 1 and application's specified users
 						data.getAccount().add(new Account(1, data.getApplication().get(0).getUsers()));
 					}
@@ -273,9 +326,17 @@ public class BankUserInterface {
 		}else if(choice.equals("3")) {//Withdraw Funds
 			//prompts for account number and amount of money they want to withdrawn or return to menu
 			System.out.println("Please enter the account number of the account you want to withdrawn from.");
-			String account = scanner.next();
+			String account = scanner.nextLine();
+			while(account.length()==0) {
+				account = scanner.nextLine();
+			}
+			
 			System.out.println("Please enter an amount of cash to withdraw in the following format(d.cc, dd.cc, etc... or d, dd, ddd, etc...) or enter \"0\" to go back to the admin menu.");
-			String amount = scanner.next();
+			String amount = scanner.nextLine();
+			while(amount.length()==0) {
+				amount = scanner.nextLine();
+			}
+			
 			boolean amountParse = true;
 			boolean accountParse = true;
 			
@@ -321,16 +382,25 @@ public class BankUserInterface {
 				adminMenu();
 			}else {//permitted access with sufficient funds
 				data.getAccount().get(index).withdraw(doubleAmount);
-				System.out.println(amount + "withdrawn from account " + account + ", returning to admin menu.");
+				LoggingUtil.logInfo("$" + amount + " withdrawn from account " + account + " by " + currentUser.getUsername());
+				System.out.println("$" + amount + " withdrawn from account " + account + ", returning to admin menu.");
 				adminMenu();
 			}
 		}else if(choice.equals("4")) {//Deposit Funds
 			
 			//prompts for account number and amount of money they want to deposit or return to menu
 			System.out.println("Please enter the account number of the account you want to deposit to.");
-			String account = scanner.next();
+			String account = scanner.nextLine();
+			while(account.length()==0) {
+				account = scanner.nextLine();
+			}
+			
 			System.out.println("Please enter an amount of cash to deposit in the following format(d.cc, dd.cc, etc... or d, dd, ddd, etc...) or enter \"0\" to go back to the admin menu.");
-			String amount = scanner.next();
+			String amount = scanner.nextLine();
+			while(amount.length()==0) {
+				amount = scanner.nextLine();
+			}
+			
 			boolean amountParse = true;
 			boolean accountParse = true;
 			
@@ -373,18 +443,30 @@ public class BankUserInterface {
 				adminMenu();
 			}else {//permitted access with sufficient funds
 				data.getAccount().get(index).deposit(doubleAmount);
-				System.out.println(amount + "deposited to account " + account + ", returning to admin menu.");
+				LoggingUtil.logInfo("$" + amount + " deposited to account " + account + " by " + currentUser.getUsername());
+				System.out.println("$" + amount + " deposited to account " + account + ", returning to admin menu.");
 				adminMenu();
 			}
 			
 		}else if(choice.equals("5")) {//Transfer Funds	
 			
 			System.out.println("Please enter the account id of the account you want to transfer funds from.");
-			String account1 = scanner.next();
+			String account1 = scanner.nextLine();
+			while(account1.length()==0) {
+				account1 = scanner.nextLine();
+			}
+			
 			System.out.println("Please enter the account id of the account you want to transfer funds to.");
-			String account2 = scanner.next();
+			String account2 = scanner.nextLine();
+			while(account2.length()==0) {
+				account2 = scanner.nextLine();
+			}
+			
 			System.out.println("Please enter the amount of funds you want to transfer in the correct format(d.cc, dd.cc, etc... or d, dd, ddd, etc...) or enter 0 to return to admin menu.");
-			String amount = scanner.next();
+			String amount = scanner.nextLine();
+			while(amount.length()==0) {
+				amount = scanner.nextLine();
+			}
 			
 			boolean amountParse = true;
 			boolean account1Parse = true;
@@ -440,14 +522,19 @@ public class BankUserInterface {
 			}else {//permitted access with sufficient funds
 				data.getAccount().get(index1).withdraw(doubleAmount);
 				data.getAccount().get(index2).deposit(doubleAmount);
-				System.out.println(amount + "transfered from account " + account1 + " to account " + account2 + ", returning to admin menu.");
+				LoggingUtil.logInfo("$" + amount + " transfered from account " + account1 + " to account " + account2 + " by " + currentUser.getUsername());
+				System.out.println("$" + amount + " transfered from account " + account1 + " to account " + account2 + ", returning to admin menu.");
 				adminMenu();
 			}
 			
 		}else if(choice.equals("6")) {//Delete account
 			
 			System.out.println("Please enter the ID of the account you want to delete or enter 0 to return to admin menu.");
-			String account = scanner.next();
+			String account = scanner.nextLine();
+			while(account.length()==0) {
+				account = scanner.nextLine();
+			}
+			
 			boolean parseable = true;
 			
 			for(int i=0 ; i<account.length() ; i++) {
@@ -458,18 +545,35 @@ public class BankUserInterface {
 			
 			int index = -1;
 			
-			if(parseable==true) {//if 
+			if(parseable==true) {//if parseable, binary search for account index
 				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account), null), new Account(0, null));
 			}
 			
 			if(account.equals("0")) {//if returning to admin menu was selected
 				System.out.println("Returning to admin menu.");
 				adminMenu();
-			}else if(index<=0){//if account not found
+			}else if(index<0){//if account not found
 				System.out.println("Account not found, returning to admin menu.");
 				adminMenu();
 			}else {
+				
+				String ownerName = "";
+				User ownerUser = new User("","");
+				for(int i=0 ; i<data.getAccount().get(index).getOwners().size() ; i++) {//go through list of accounts owners
+					
+					//set target name to the current account owner's name
+					ownerName = data.getAccount().get(index).getOwners().get(i);
+					for(int j=0 ; !ownerUser.getUsername().equals(ownerName) ; j++) {//traverses list of users until finds the one with correct user name
+						if(data.getUser().get(j).getUsername().equals(ownerName)) {//if current user has correct user name
+							//remove account id from the owner's list of accounts owned and sets moves to next account owner
+							Integer targetInt = new Integer(data.getAccount().get(index).getId());
+							((Customer)data.getUser().get(j)).getOwnedAccounts().remove((Object)targetInt);
+							ownerUser = data.getUser().get(j);
+						}
+					}
+				}
 				data.getAccount().remove(index);
+				LoggingUtil.logInfo("Account " + account + " deleted.");
 				System.out.println("Account ID " + account + " deleted, returning to admin menu.");
 				adminMenu();
 			}
@@ -484,22 +588,25 @@ public class BankUserInterface {
 	
 	private static void employeeMenu() {
 		
-		System.out.println("Employee Menu");
-		System.out.println("1.View Customer Info\n2.View Account Info\n3.Approve/Deny Account Applcations\n4.Logout");
+		System.out.println("\n\n\n===============\nEmployee Menu");
+		System.out.println("1.View Customer Info\n2.View Account Info\n3.Approve/Deny Account Applcations\n4.Logout\n===============");
 		System.out.println("Please select a option by typing in a valid number(1-4).");
-		String choice = scanner.next();
+		String choice = scanner.nextLine();
 		
 		//error trapping invalid inputs until valid input is entered
 		while(!choice.equals("1") && !choice.equals("2") && !choice.equals("3") && !choice.equals("4")) {
 			System.out.println("Invalid option, please try again");
-			choice = scanner.next();
+			choice = scanner.nextLine();
 		}
 		
 		if(choice.equals("1")) {//View Customer info
 			
 			//prompts for username of customer info that you want to view
 			System.out.println("Please enter the username of the customer whose info you want to view or enter \"menu\" to return to employee menu.");
-			String customerName = scanner.next();
+			String customerName = scanner.nextLine();
+			while(customerName.length()==0) {
+				customerName = scanner.nextLine();
+			}
 			
 			if(data.getLoginInfo().containsKey(customerName)) {//if user name is a valid user
 				
@@ -515,7 +622,7 @@ public class BankUserInterface {
 				if(tempUser instanceof Customer) {//if specified user is a customer, print info
 					((Customer)tempUser).printInfo();
 					System.out.println("Enter anything to continue to employee menu.");
-					scanner.next();
+					scanner.nextLine();
 					System.out.println("Returning to employee menu.");
 					employeeMenu();
 				}else {//if specified user is not a customer, return to employee menu
@@ -530,7 +637,12 @@ public class BankUserInterface {
 			
 		}else if(choice.equals("2")) {//View Account Info
 			System.out.println("Please enter the ID of the account whose info you want to view or enter \"menu\" to return to employee menu.");
-			String accountID = scanner.next();
+			String accountID = scanner.nextLine();
+			
+			while(accountID.length()==0) {
+				accountID = scanner.nextLine();
+			}
+			
 			boolean accountParse = true;
 			
 			for(int j=0 ; j<accountID.length() ; j++) {
@@ -550,7 +662,7 @@ public class BankUserInterface {
 			}else {
 				data.getAccount().get(index).printInfo();
 				System.out.println("Enter anything to continue to employee menu.");
-				scanner.next();
+				scanner.nextLine();
 				System.out.println("Returning to employee menu.");
 				employeeMenu();
 			}
@@ -560,21 +672,53 @@ public class BankUserInterface {
 				
 				//prints out oldest application and prompts for an action
 				data.getApplication().get(0).printInfo();
-				String option = scanner.next();
+				String option = scanner.nextLine();
 				
 				//if input is invalid, prompts for input until it is valid
 				while(!option.equals("1") && !option.equals("2") && !option.equals("3")) {
 					System.out.println("Invalid option, please try again.");
-					option = scanner.next();
+					option = scanner.nextLine();
 				}
 				
 				if(option.equals("1")) {//approve account
 					
 					if(!data.getAccount().isEmpty()) {//if account list is not empty
+						int newID = data.getAccount().get(data.getAccount().size()-1).getId()+1;
+						
+						for(int i=0 ; i<data.getApplication().get(0).getUsers().size() ; i++) {//goes through list of users in application
+							
+							User tempUser = new User("","");
+							
+							//goes through list of users to find the one with correct user name
+							for(int j=0 ; !tempUser.getUsername().equals(data.getApplication().get(0).getUsers().get(i)) ; j++) {
+								if(data.getUser().get(j).getUsername().equals(data.getApplication().get(0).getUsers().get(i))) {//once found, sets that user to the temp user
+									tempUser = data.getUser().get(j);
+									((Customer)tempUser).getOwnedAccounts().add(newID);
+								}
+							}
+							
+						}
 						//adds new account to account list with id 1 higher than account with highest id and application's specified users
-						data.getAccount().add(new Account(data.getAccount().get(data.getAccount().size()-1).getId()+1, data.getApplication().get(0).getUsers()));
+						data.getAccount().add(new Account(newID, data.getApplication().get(0).getUsers()));
+						LoggingUtil.logInfo("Account " + newID + " created with account balance of $0.");
 					}else {//if account list is empty
+						
 						//adds new account to account list with id of 1 and application's specified users
+						int newID = 1;
+						
+						for(int i=0 ; i<data.getApplication().get(0).getUsers().size() ; i++) {//goes through list of users in application
+							
+							User tempUser = new User("","");
+							
+							//goes through list of users to find the one with correct user name
+							for(int j=0 ; !tempUser.getUsername().equals(data.getApplication().get(0).getUsers().get(i)) ; j++) {
+								if(data.getUser().get(j).getUsername().equals(data.getApplication().get(0).getUsers().get(i))) {//once found, sets that user to the temp user
+									tempUser = data.getUser().get(j);
+									((Customer)tempUser).getOwnedAccounts().add(newID);
+								}
+							}
+							
+						}
 						data.getAccount().add(new Account(1, data.getApplication().get(0).getUsers()));
 					}
 					
@@ -609,15 +753,15 @@ public class BankUserInterface {
 	private static void customerMenu() {
 		
 		//prompts customer for an action
-		System.out.println("Customer Menu");
-		System.out.println("1.Apply for an account \n2.Withdraw Funds \n3.Deposit Funds \n4.Transfer Funds \n5.Log out");
+		System.out.println("\n\n\n===============\nCustomer Menu");
+		System.out.println("1.Apply for an account \n2.Withdraw Funds \n3.Deposit Funds \n4.Transfer Funds \n5.View Accounts\n6.Log out\n===============");
 		System.out.println("Please select a option by typing in a valid number(1-5).");
-		String choice = scanner.next();
+		String choice = scanner.nextLine();
 		
 		//error trapping invalid inputs until valid input is entered
-		while(!choice.equals("1") && !choice.equals("2") && !choice.equals("3") && !choice.equals("4") && !choice.equals("5")) {
+		while(!choice.equals("1") && !choice.equals("2") && !choice.equals("3") && !choice.equals("4") && !choice.equals("5") && !choice.equals("6")) {
 			System.out.println("Invalid option, please try again");
-			choice = scanner.next();
+			choice = scanner.nextLine();
 		}
 		
 		
@@ -627,11 +771,11 @@ public class BankUserInterface {
 			System.out.println("Applying for account");
 			System.out.println("1.Individual Account\n2.Joint Account\n3.Customer Menu");
 			System.out.println("Please enter a valid choice");
-			String accountType = scanner.next();
+			String accountType = scanner.nextLine();
 			
 			while(!accountType.equals("1") && !accountType.equals("2") && !accountType.equals("3")) {
 				System.out.println("Invalid option, please try again");
-				accountType = scanner.next();
+				accountType = scanner.nextLine();
 			}
 			
 			if(accountType.equals("1")) {//if applied for individual account
@@ -650,7 +794,11 @@ public class BankUserInterface {
 				while(!jointOwners.equals("0")) {
 					
 					System.out.println("Creating joint account, please enter a valid username with whom you want to share an account or enter 0 if you have listed all users.");
-					jointOwners = scanner.next();
+					jointOwners = scanner.nextLine();
+					
+					while(jointOwners.length()==0) {
+						jointOwners = scanner.nextLine();
+					}
 					
 					if(data.getLoginInfo().containsKey(jointOwners)) {//if exiting user name is entered
 						
@@ -690,12 +838,19 @@ public class BankUserInterface {
 			
 			//prompts for account number and amount of money they want to withdrawn or return to menu
 			System.out.println("Please enter the account number of the account you want to withdrawn from.");
-			String account = scanner.next();
+			String account = scanner.nextLine();
+			while(account.length()==0) {
+				account = scanner.nextLine();
+			}
+			
 			System.out.println("Please enter an amount of cash to withdraw in the following format(d.cc, dd.cc, etc... or d, dd, ddd, etc...) or enter \"0\" to go back to the customer menu.");
-			String amount = scanner.next();
+			String amount = scanner.nextLine();
+			while(amount.length()==0) {
+				amount = scanner.nextLine();
+			}
+			
 			boolean amountParse = true;
 			boolean accountParse = true;
-			
 			double doubleAmount = 0;
 			
 			for(int i=0 ; i<amount.length() ; i++) {//check if amount can be converted to correctly formated double
@@ -741,7 +896,8 @@ public class BankUserInterface {
 				customerMenu();
 			}else {//permitted access with sufficient funds
 				data.getAccount().get(index).withdraw(doubleAmount);
-				System.out.println(amount + "withdrawn from account " + account + ", returning to customer menu.");
+				LoggingUtil.logInfo("$" + amount + " withdrawn from account " + account + " by " + currentUser.getUsername());
+				System.out.println("$" + amount + " withdrawn from account " + account + ", returning to customer menu.");
 				customerMenu();
 			}
 			
@@ -749,9 +905,16 @@ public class BankUserInterface {
 			
 			//prompts for account number and amount of money they want to deposit or return to menu
 			System.out.println("Please enter the account number of the account you want to deposit to.");
-			String account = scanner.next();
+			String account = scanner.nextLine();
+			while(account.length()==0) {
+				account = scanner.nextLine();
+			}
+			
 			System.out.println("Please enter an amount of cash to deposit in the following format(d.cc, dd.cc, etc... or d, dd, ddd, etc...) or enter \"0\" to go back to the customer menu.");
-			String amount = scanner.next();
+			String amount = scanner.nextLine();
+			while(amount.length()==0) {
+				amount = scanner.nextLine();
+			}
 			boolean amountParse = true;
 			boolean accountParse = true;
 			
@@ -797,18 +960,30 @@ public class BankUserInterface {
 				customerMenu();
 			}else {//permitted access with sufficient funds
 				data.getAccount().get(index).deposit(doubleAmount);
-				System.out.println(amount + "deposited to account " + account + ", returning to customer menu.");
+				LoggingUtil.logInfo("$" + amount + " deposited to account " + account + " by " + currentUser.getUsername());
+				System.out.println("$" + amount + " deposited to account " + account + ", returning to customer menu.");
 				customerMenu();
 			}
 			
 		}else if(choice.equals("4")) {//if transferring funds is selected
 			
 			System.out.println("Please enter the account id of the account you want to transfer funds from.");
-			String account1 = scanner.next();
+			String account1 = scanner.nextLine();
+			while(account1.length()==0) {
+				account1 = scanner.nextLine();
+			}
+			
 			System.out.println("Please enter the account id of the account you want to transfer funds to.");
-			String account2 = scanner.next();
+			String account2 = scanner.nextLine();
+			while(account2.length()==0) {
+				account2 = scanner.nextLine();
+			}
+			
 			System.out.println("Please enter the amount of funds you want to transfer in the correct format(d.cc, dd.cc, etc... or d, dd, ddd, etc...) or enter 0 to return to main menu.");
-			String amount = scanner.next();
+			String amount = scanner.nextLine();
+			while(amount.length()==0) {
+				amount = scanner.nextLine();
+			}
 			
 			boolean amountParse = true;
 			boolean account1Parse = true;
@@ -868,10 +1043,16 @@ public class BankUserInterface {
 			}else {//permitted access with sufficient funds
 				data.getAccount().get(index1).withdraw(doubleAmount);
 				data.getAccount().get(index2).deposit(doubleAmount);
-				System.out.println(amount + "transfered from account " + account1 + " to account " + account2 + ", returning to customer menu.");
+				LoggingUtil.logInfo("$" + amount + " transfered from account " + account1 + " to account " + account2 + " by " + currentUser.getUsername());
+				System.out.println("$" + amount + " transfered from account " + account1 + " to account " + account2 + ", returning to customer menu.");
 				customerMenu();
 			}
 			
+		}else if(choice.equals("5")){//view account info
+			((Customer)currentUser).printAccounts();
+			System.out.println("Enter anything to return to continue to previous menu.");
+			scanner.nextLine();
+			customerMenu();
 		}else {//if log out is selected1
 			
 			//clears current user and return to menu screen

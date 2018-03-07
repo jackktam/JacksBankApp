@@ -10,8 +10,15 @@ public class Customer extends User implements EditAccount, Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -2412725884484869873L;
-	
 	private List<Integer> ownedAccounts;
+	
+	public List<Integer> getOwnedAccounts() {
+		return ownedAccounts;
+	}
+
+	public void setOwnedAccounts(List<Integer> ownedAccounts) {
+		this.ownedAccounts = ownedAccounts;
+	}
 
 	public Customer(String username, String password) {
 		super(username, password);
@@ -39,9 +46,21 @@ public class Customer extends User implements EditAccount, Serializable{
 	
 	public void printInfo() {
 		System.out.println("Customer username: " + this.username + "\nCustomer password: " + this.password);
+		System.out.println(this.username + "'s Accounts\n===============");
 		for(Integer i: ownedAccounts) {
-			System.out.println("Customer owns the account with Account ID: " + i);
+			System.out.println(i);
 		}
+		System.out.println("===============");
+	}
+	
+	public void printAccounts() {
+		
+		System.out.println(this.username + "'s Accounts\n===============");
+		for(Integer i: ownedAccounts) {
+			System.out.println(i);
+		}
+		System.out.println("===============");
+		
 	}
 
 }
