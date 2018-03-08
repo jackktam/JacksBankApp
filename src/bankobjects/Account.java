@@ -17,7 +17,7 @@ public class Account implements Serializable, Comparator<Account> {
 	
 	public Account(int id, List<String> owners) {
 		super();
-		this.balance = 0;
+		this.balance = 0.01;
 		this.id = id;
 		this.owners = owners;
 	}
@@ -67,10 +67,17 @@ public class Account implements Serializable, Comparator<Account> {
 		
 	}
 	
-	public void withdraw(double amount) {
-		
-		this.balance = this.balance-amount;
-		
+	public boolean withdraw(double amount) {
+		if(amount>this.balance) {
+			System.out.println("Account balance not enough, transaction canceled.");
+			return false;
+		}else if(amount<0) {
+			System.out.println("Cannot withdraw negative amount, transaction canceled.");
+			return false;
+		}else {
+			this.balance = this.balance-amount;
+			return true;
+		}
 	}
 	
 	public void deposit(double amount) {

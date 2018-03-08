@@ -1,1 +1,7 @@
-2018-03-06 21:44:17 INFO  root:22 - Account 2 created with account balance of $0.
+2018-03-07 13:24:05 ERROR root:14 - Bank database not found, initiating new bank with and admin and employee.
+2018-03-07 13:31:03 INFO  root:22 - Customer jack has registered a new account.
+2018-03-07 17:20:04 INFO  root:22 - Customer customer has registered a new account.
+2018-03-07 17:20:11 INFO  root:22 - Customer jack has logged in.
+2018-03-07 17:21:53 INFO  root:22 - Admin admin has logged in.
+2018-03-07 17:22:03 INFO  root:22 - Account 1 created with account balance of $0.01.
+2018-03-07 17:22:12 INFO  root:22 - Account 1001 created with account balance of $0.01.

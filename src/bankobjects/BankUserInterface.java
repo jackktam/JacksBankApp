@@ -36,6 +36,7 @@ public class BankUserInterface {
 				data.getLoginInfo().put("employee","employee");
 				data.getUser().add(tempEmployee);
 				out.writeObject(data);
+				LoggingUtil.logError("Bank database not found, initiating new bank with and admin and employee.");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -60,9 +61,9 @@ public class BankUserInterface {
 	private static void menu() {
 		
 		//default text that shows every time menu is called
-		System.out.println("\n\n\n=========================\nMain Menu");  
+		System.out.println("\n\n\n==============================\nMain Menu");  
 		System.out.println("1.Login \n2.Register \n3.Shut Down");
-		System.out.println("=========================");
+		System.out.println("==============================");
 		System.out.println("Please type in an option(1-3)");
 		String selection = scanner.nextLine();
 		
@@ -116,10 +117,13 @@ public class BankUserInterface {
 			}
 			
 			if(currentUser instanceof Admin) {
+				LoggingUtil.logInfo("Admin " + currentUser.getUsername() + " has logged in.");
 				adminMenu();
 			}else if(currentUser instanceof Employee) {
+				LoggingUtil.logInfo("Employee " + currentUser.getUsername() + " has logged in.");
 				employeeMenu();
 			}else {
+				LoggingUtil.logInfo("Customer " + currentUser.getUsername() + " has logged in.");
 				customerMenu();
 			}
 			
@@ -162,6 +166,7 @@ public class BankUserInterface {
 			Customer tempCustomer = new Customer(username, password);
 			data.getUser().add(tempCustomer);
 			data.getLoginInfo().put(username, password);
+			LoggingUtil.logInfo("Customer " + tempCustomer.getUsername() + " has registered a new account.");
 			System.out.println("Congratulations, you have sucessfully registered for an account! Returning to main menu.\n\n\n");
 			menu();
 			
@@ -199,14 +204,14 @@ public class BankUserInterface {
 	
 	private static void adminMenu() {
 		
-		System.out.println("\n\n\n===============\nAdmin Menu");
-		System.out.println("1.View Account Info\n2.View Account Application\n3.Withdraw Funds\n4.Deposit Funds\n5.Transfer Funds\n6.Delete Account\n7.Logout\n===============");
-		System.out.println("Please select a option by typing in a valid number(1-7).");
+		System.out.println("\n\n\n==============================\nAdmin Menu");
+		System.out.println("1.View Account Info\n2.View Account Application\n3.Withdraw Funds\n4.Deposit Funds\n5.Transfer Funds\n6.Delete Account\n7.List of All Customers\n8.List of All Active Accounts\n9.Logout\n==============================");
+		System.out.println("Please select a option by typing in a valid number(1-9).");
 		String choice = scanner.nextLine();
 		
 		//error trapping invalid inputs until valid input is entered
-		while(!choice.equals("1") && !choice.equals("2") && !choice.equals("3") && !choice.equals("4") 
-				&& !choice.equals("5") && !choice.equals("6") && !choice.equals("7")) {
+		while(!choice.equals("1") && !choice.equals("2") && !choice.equals("3") && !choice.equals("4") && !choice.equals("5") 
+				&& !choice.equals("6") && !choice.equals("7") && !choice.equals("8") && !choice.equals("9")) {
 			System.out.println("Invalid option, please try again");
 			choice = scanner.nextLine();
 		}
@@ -280,11 +285,11 @@ public class BankUserInterface {
 						
 						//adds new account to account list with id 1 higher than account with highest id and application's specified users
 						data.getAccount().add(new Account(newID, data.getApplication().get(0).getUsers()));
-						LoggingUtil.logInfo("Account " + newID + " created with account balance of $0.");
+						LoggingUtil.logInfo("Account " + newID + " created with account balance of $0.01.");
 						
 					}else {//if account list is empty
 						
-						int newID = 1;
+						int newID = 1000;
 						
 						for(int i=0 ; i<data.getApplication().get(0).getUsers().size() ; i++) {//goes through list of users in application
 							
@@ -300,7 +305,8 @@ public class BankUserInterface {
 							
 						}
 						//adds new account to account list with id of 1 and application's specified users
-						data.getAccount().add(new Account(1, data.getApplication().get(0).getUsers()));
+						data.getAccount().add(new Account(1000, data.getApplication().get(0).getUsers()));
+						LoggingUtil.logInfo("Account " + newID + " created with account balance of $0.01.");
 					}
 					
 					//removes approved application from application list
@@ -380,6 +386,9 @@ public class BankUserInterface {
 			}else if(data.getAccount().get(index).negativeBalance(doubleAmount)) {//if not enough funds
 				System.out.println("Sorry there is not have enough funds in this account, returning to admin menu.");
 				adminMenu();
+			}else if(amount.length() > 12){
+				System.out.println("Sorry we can not authorize transactions of this scale, returning to admin menu.");
+				adminMenu();
 			}else {//permitted access with sufficient funds
 				data.getAccount().get(index).withdraw(doubleAmount);
 				LoggingUtil.logInfo("$" + amount + " withdrawn from account " + account + " by " + currentUser.getUsername());
@@ -440,6 +449,9 @@ public class BankUserInterface {
 				adminMenu();
 			}else if(index<0) {//if account id not found
 				System.out.println("Sorry account id not found, returning to admin menu.");
+				adminMenu();
+			}else if(amount.length() > 12){//value too high
+				System.out.println("Sorry we can not authorize transactions of this scale, returning to admin menu.");
 				adminMenu();
 			}else {//permitted access with sufficient funds
 				data.getAccount().get(index).deposit(doubleAmount);
@@ -519,6 +531,9 @@ public class BankUserInterface {
 			}else if(index1<0 || index2<0) {//if account id not found
 				System.out.println("Sorry one or more account ids not found, returning to admin menu.");
 				adminMenu();
+			}else if(amount.length() > 12){//value too high
+				System.out.println("Sorry we can not authorize transactions of this scale, returning to admin menu.");
+				adminMenu();
 			}else {//permitted access with sufficient funds
 				data.getAccount().get(index1).withdraw(doubleAmount);
 				data.getAccount().get(index2).deposit(doubleAmount);
@@ -578,7 +593,34 @@ public class BankUserInterface {
 				adminMenu();
 			}
 			
-		}else {//Logout
+		}else if(choice.equals("7")) {//all customers
+			
+			System.out.println("Registered Customers\n==============================");
+			
+			for(User u: data.getUser()) {
+				if(u instanceof Customer) {
+					System.out.println(u.getUsername());
+				}
+			}
+			
+			System.out.println("==============================\nEnter anything to continue to previous menu.");
+			scanner.nextLine();
+			adminMenu();
+			
+		}else if(choice.equals("8")) {//view all accounts
+			
+			System.out.println("Active Account IDs\n==============================");
+			
+			for(Account a: data.getAccount()) {
+				System.out.println(a.getId());
+			}
+			
+			System.out.println("==============================\nEnter anything to continue to previous menu.");
+			scanner.nextLine();
+			adminMenu();
+			
+		}
+			else {//Logout
 			//clears current user and return to menu screen
 			System.out.println("Logging out and returning to main menu\n\n\n");
 			currentUser = new User("","");
@@ -588,8 +630,8 @@ public class BankUserInterface {
 	
 	private static void employeeMenu() {
 		
-		System.out.println("\n\n\n===============\nEmployee Menu");
-		System.out.println("1.View Customer Info\n2.View Account Info\n3.Approve/Deny Account Applcations\n4.Logout\n===============");
+		System.out.println("\n\n\n==============================\nEmployee Menu");
+		System.out.println("1.View Customer Info\n2.View Account Info\n3.Approve/Deny Account Applcations\n4.Logout\n==============================");
 		System.out.println("Please select a option by typing in a valid number(1-4).");
 		String choice = scanner.nextLine();
 		
@@ -700,11 +742,11 @@ public class BankUserInterface {
 						}
 						//adds new account to account list with id 1 higher than account with highest id and application's specified users
 						data.getAccount().add(new Account(newID, data.getApplication().get(0).getUsers()));
-						LoggingUtil.logInfo("Account " + newID + " created with account balance of $0.");
+						LoggingUtil.logInfo("Account " + newID + " created with account balance of $0.01.");
 					}else {//if account list is empty
 						
 						//adds new account to account list with id of 1 and application's specified users
-						int newID = 1;
+						int newID = 1000;
 						
 						for(int i=0 ; i<data.getApplication().get(0).getUsers().size() ; i++) {//goes through list of users in application
 							
@@ -719,7 +761,8 @@ public class BankUserInterface {
 							}
 							
 						}
-						data.getAccount().add(new Account(1, data.getApplication().get(0).getUsers()));
+						data.getAccount().add(new Account(1000, data.getApplication().get(0).getUsers()));
+						LoggingUtil.logInfo("Account " + newID + " created with account balance of $0.01.");
 					}
 					
 					//removes approved application from application list
@@ -753,9 +796,9 @@ public class BankUserInterface {
 	private static void customerMenu() {
 		
 		//prompts customer for an action
-		System.out.println("\n\n\n===============\nCustomer Menu");
-		System.out.println("1.Apply for an account \n2.Withdraw Funds \n3.Deposit Funds \n4.Transfer Funds \n5.View Accounts\n6.Log out\n===============");
-		System.out.println("Please select a option by typing in a valid number(1-5).");
+		System.out.println("\n\n\n==============================\nCustomer Menu");
+		System.out.println("1.Apply for an account \n2.Withdraw Funds \n3.Deposit Funds \n4.Transfer Funds \n5.View Accounts\n6.Log out\n==============================");
+		System.out.println("Please select a option by typing in a valid number(1-6).");
 		String choice = scanner.nextLine();
 		
 		//error trapping invalid inputs until valid input is entered
@@ -894,6 +937,9 @@ public class BankUserInterface {
 			}else if(data.getAccount().get(index).negativeBalance(doubleAmount)) {//if not enough funds
 				System.out.println("Sorry you do not have enough funds in this account, returning to customer menu.");
 				customerMenu();
+			}else if(amount.length() > 12){
+				System.out.println("Sorry we can not authorize transactions of this scale, returning to customer menu.");
+				customerMenu();
 			}else {//permitted access with sufficient funds
 				data.getAccount().get(index).withdraw(doubleAmount);
 				LoggingUtil.logInfo("$" + amount + " withdrawn from account " + account + " by " + currentUser.getUsername());
@@ -957,6 +1003,9 @@ public class BankUserInterface {
 				customerMenu();
 			}else if(data.getAccount().get(index).allowedAccess(currentUser.getUsername())==false) {//if account does not belong to user
 				System.out.println("Sorry you do not have access to this account, returning to customer menu.");
+				customerMenu();
+			}else if(amount.length() > 12){
+				System.out.println("Sorry we can not authorize transactions of this scale, returning to customer menu.");
 				customerMenu();
 			}else {//permitted access with sufficient funds
 				data.getAccount().get(index).deposit(doubleAmount);
@@ -1039,6 +1088,9 @@ public class BankUserInterface {
 			}else if(data.getAccount().get(index1).allowedAccess(currentUser.getUsername())==false 
 					|| data.getAccount().get(index2).allowedAccess(currentUser.getUsername())==false) {//if account does not belong to user
 				System.out.println("Sorry you do not have access to one of the accounts, returning to customer menu.");
+				customerMenu();
+			}else if(amount.length() > 12){
+				System.out.println("Sorry we can not authorize transactions of this scale, returning to customer menu.");
 				customerMenu();
 			}else {//permitted access with sufficient funds
 				data.getAccount().get(index1).withdraw(doubleAmount);
