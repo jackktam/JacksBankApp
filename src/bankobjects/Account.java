@@ -89,7 +89,7 @@ public class Account implements Serializable, Comparator<Account> {
 	public void printInfo() {
 		System.out.println("Account ID: " + this.id);
 		System.out.println("Owners\n======================");
-		for(String s: owners) {
+		for(String s: this.getOwners()) {
 			System.out.println(s);
 		}
 		System.out.println("======================");

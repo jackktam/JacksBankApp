@@ -61,10 +61,13 @@ public class BankUserInterface {
 	private static void menu() {
 		
 		//default text that shows every time menu is called
-		System.out.println("\n\n\n==============================\nMain Menu");  
-		System.out.println("1.Login \n2.Register \n3.Shut Down");
-		System.out.println("==============================");
-		System.out.println("Please type in an option(1-3)");
+		System.out.println("\n\n\n==============================");
+		System.out.println("Main Menu                                           +---------------------------------------+");
+		System.out.println("1.Login                                             |      ****SPECIAL PROMOTION****        |");
+		System.out.println("2.Register                                          | Register and make a new account today |"); 
+		System.out.println("3.Shut Down                                         | and we'll start your account off with |"); 
+		System.out.println("==============================                      |          A WHOLE $0.01!!!!            |");
+		System.out.println("Please type in an option(1-3)                       +---------------------------------------+");
 		String selection = scanner.nextLine();
 		
 		//if input is not one of the valid options catches it and prompts a new input
@@ -234,7 +237,7 @@ public class BankUserInterface {
 			}
 			
 			int index = -1;
-			if(accountParse==true) {
+			if(accountParse==true && accountID.length()<10) {
 				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(accountID), null), new Account(0, null));
 			}
 			
@@ -370,7 +373,7 @@ public class BankUserInterface {
 			
 			int index = -1 ;
 			
-			if(accountParse==true) {
+			if(accountParse==true && account.length()<10) {
 				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account), null), new Account(0, null));
 			}
 			
@@ -437,7 +440,7 @@ public class BankUserInterface {
 			
 			int index = -1 ;
 			
-			if(accountParse==true) {
+			if(accountParse==true && account.length()<10) {
 				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account), null), new Account(0, null));
 			}
 			
@@ -515,10 +518,10 @@ public class BankUserInterface {
 			int index1 = -1;
 			int index2 = -1;
 			
-			if(account1Parse==true) {//finds index of account 1 if parseable
+			if(account1Parse==true && account1.length()<10) {//finds index of account 1 if parseable
 				index1 = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account1), null), new Account(0, null));
 			}
-			if(account2Parse==true) {//finds index of account 2 if parseable
+			if(account2Parse==true && account2.length()<10) {//finds index of account 2 if parseable
 				index2 = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account2), null), new Account(0, null));
 			}
 			
@@ -694,7 +697,7 @@ public class BankUserInterface {
 			}
 			
 			int index = -1;
-			if(accountParse==true) {
+			if(accountParse==true && accountID.length()<10) {
 				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(accountID), null), new Account(0, null));
 			}
 			
@@ -918,7 +921,7 @@ public class BankUserInterface {
 			
 			int index = -1 ;
 			
-			if(accountParse==true) {
+			if(accountParse==true && account.length()<10) {
 				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account), null), new Account(0, null));
 			}
 			
@@ -988,7 +991,7 @@ public class BankUserInterface {
 			
 			int index = -1 ;
 			
-			if(accountParse==true) {
+			if(accountParse==true && account.length()<10) {
 				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account), null), new Account(0, null));
 			}
 			
@@ -1069,10 +1072,10 @@ public class BankUserInterface {
 			int index1 = -1;
 			int index2 = -1;
 			
-			if(account1Parse==true) {//finds index of account 1 if parseable
+			if(account1Parse==true && account1.length()<10) {//finds index of account 1 if parseable
 				index1 = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account1), null), new Account(0, null));
 			}
-			if(account2Parse==true) {//finds index of account 2 if parseable
+			if(account2Parse==true && account2.length()<10) {//finds index of account 2 if parseable
 				index2 = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account2), null), new Account(0, null));
 			}
 			

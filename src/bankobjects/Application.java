@@ -29,19 +29,22 @@ public class Application implements Serializable {
 		
 	}
 	
-	public void printInfo() {
-		
+	public int printInfo() {
+		int i = 0;
 		if(users.size()==1) {
 			System.out.println("Application for single account by: " + users.get(0));
+			i= 1;
 		}else {
 			System.out.println("Joint Account Applicants\n=======================");
-			for(String s: users) {
+			for(String s: this.getUsers()) {
 				System.out.println(s);
+				i++;
 			}
 			System.out.println("=======================");
 		}
 		System.out.println("1.Approve Application\n2.Deny Application\n3.Return to previous menu");
 		System.out.println("Please enter an option(1-3)");
+		return i;
 	}
 
 	public List<String> getUsers() {
