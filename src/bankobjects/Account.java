@@ -22,6 +22,12 @@ public class Account implements Serializable, Comparator<Account> {
 		this.owners = owners;
 	}
 	
+	public Account() {
+		this.id = 0 ; 
+		this.balance = 0;
+		this.owners = null;
+	}
+
 	public double getBalance() {
 		return balance;
 	}

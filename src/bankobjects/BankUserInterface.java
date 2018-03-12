@@ -11,6 +11,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.revature.dao.AccountDao;
+import com.revature.dao.AccountDaoImpl;
+import com.revature.dao.ApplicationDao;
+import com.revature.dao.ApplicationDaoImpl;
+import com.revature.dao.UserDao;
+import com.revature.dao.UserDaoImpl;
 import com.revature.util.LoggingUtil;
 
 public class BankUserInterface {
@@ -104,20 +110,19 @@ public class BankUserInterface {
 		while(password.length()==0) {
 			password = scanner.nextLine();
 		}
+		
+		UserDao userd = new UserDaoImpl();
+		User user = userd.retrieveUserByName(username);
+		
 		//if "menu" is entered as the username, they are returned to the main menu
 		if(username.equals("menu")) {
 			
 			menu();
 			
-		}else if(data.getLoginInfo().containsKey(username) && 
-				data.getLoginInfo().get(username).equals(password)) {//checks to see if the username is valid and if the password entered is correct
+		}else if(user.getUsername().equals(username) && user.getPassword().equals(password)) {//checks to see if the username is valid and if the password entered is correct
 			
 			//goes through list of users to find the one with correct user name
-			for(int i=0 ; !currentUser.getUsername().equals(username) ; i++) {
-				if(data.getUser().get(i).getUsername().equals(username)) {//once found, sets that user to the current user
-					currentUser = data.getUser().get(i);
-				}
-			}
+			currentUser = user;
 			
 			if(currentUser instanceof Admin) {
 				LoggingUtil.logInfo("Admin " + currentUser.getUsername() + " has logged in.");
@@ -153,13 +158,17 @@ public class BankUserInterface {
 			password = scanner.nextLine();
 		}
 		
+		UserDao userd = new UserDaoImpl();
+		User user = userd.retrieveUserByName(username);
+
+		
 		//if "menu" is entered as the user name, they are returned to the main menu
 		if(username.equals("menu")) {
 			
 			System.out.println("\n\n\n");
 			menu();
 			
-		}else if(data.getLoginInfo().containsKey(username)) {//if user name is already taken
+		}else if(user.getUsername().equals(username)) {//if user name is already taken
 			
 			System.out.println("Sorry, the desired username is already taken.");
 			register();
@@ -167,8 +176,7 @@ public class BankUserInterface {
 		}else {//if username not taken, registers user and returns to main menu
 			
 			Customer tempCustomer = new Customer(username, password);
-			data.getUser().add(tempCustomer);
-			data.getLoginInfo().put(username, password);
+			userd.createUser(tempCustomer);
 			LoggingUtil.logInfo("Customer " + tempCustomer.getUsername() + " has registered a new account.");
 			System.out.println("Congratulations, you have sucessfully registered for an account! Returning to main menu.\n\n\n");
 			menu();
@@ -236,16 +244,18 @@ public class BankUserInterface {
 				}
 			}
 			
-			int index = -1;
+			AccountDao accd = new AccountDaoImpl();
+			Account acc = new Account();
+			
 			if(accountParse==true && accountID.length()<10) {
-				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(accountID), null), new Account(0, null));
+				acc = accd.retrieveAccountById(Integer.parseInt(accountID));
 			}
 			
-			if(index<0) {
+			if(acc.getId()==0) {
 				System.out.println("Specified account does not exist, we are now returning to admin menu.");
 				adminMenu();
 			}else {
-				data.getAccount().get(index).printInfo();
+				acc.printInfo();
 				System.out.println("Enter anything to continue to admin menu.");
 				scanner.nextLine();
 				System.out.println("Returning to admin menu.");
@@ -254,10 +264,13 @@ public class BankUserInterface {
 			
 		}else if(choice.equals("2")) {//View Account Application
 			
-			if(!data.getApplication().isEmpty()) {//if there is a application
+			ApplicationDao appd = new ApplicationDaoImpl();
+			Application app = appd.retrieveNextApp();
+			
+			if(!app.getUsers().isEmpty()) {//if there is a application
 				
 				//prints out oldest application and prompts for an action
-				data.getApplication().get(0).printInfo();
+				app.printInfo();
 				String option = scanner.nextLine();
 				
 				//if input is invalid, prompts for input until it is valid

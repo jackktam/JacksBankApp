@@ -56,3 +56,15 @@
 2018-03-09 10:17:21 INFO  root:22 - Admin admin has logged in.
 2018-03-09 10:17:35 INFO  root:22 - Account 1005 deleted.
 2018-03-09 10:18:29 INFO  root:22 - Employee employee has logged in.
+2018-03-11 20:00:54 INFO  root:22 - Account 1 deleted
+2018-03-12 15:35:21 INFO  root:22 - Customer got has registered a new account.
+2018-03-12 15:41:06 INFO  root:22 - Customer gott has registered a new account.
+2018-03-12 15:43:32 INFO  root:22 - Customer gott has registered a new account.
+2018-03-12 15:49:08 INFO  root:22 - Admin admin has logged in.
+2018-03-12 15:51:00 INFO  root:22 - Customer jack has registered a new account.
+2018-03-12 15:57:58 INFO  root:22 - Customer jack has logged in.
+2018-03-12 16:49:41 INFO  root:22 - Customer customer has registered a new account.
+2018-03-12 16:52:15 INFO  root:22 - Customer jack has logged in.
+2018-03-12 16:52:24 INFO  root:22 - Customer customer has logged in.
+2018-03-12 16:52:34 INFO  root:22 - Admin admin has logged in.
+2018-03-12 16:52:46 INFO  root:22 - Employee employee has logged in.
