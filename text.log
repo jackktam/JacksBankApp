@@ -125,3 +125,33 @@
 2018-03-13 01:30:54 INFO  root:22 - Account 17 deleted
 2018-03-13 01:30:54 INFO  root:22 - Account 17 deleted.
 2018-03-13 01:46:34 INFO  root:22 - Customer jack has logged in.
+2018-03-13 09:05:08 INFO  root:22 - Customer mom has registered a new account.
+2018-03-13 09:05:15 INFO  root:22 - Customer dad has registered a new account.
+2018-03-13 09:05:23 INFO  root:22 - Customer mom has logged in.
+2018-03-13 09:05:44 INFO  root:22 - Customer dad has logged in.
+2018-03-13 09:06:29 INFO  root:22 - Admin admin has logged in.
+2018-03-13 09:07:37 INFO  root:22 - Account 18 balance updated to $1000.01
+2018-03-13 09:07:37 INFO  root:22 - $1000 deposited to account 18 by admin
+2018-03-13 09:08:11 INFO  root:22 - Account 18 balance updated to $980.01
+2018-03-13 09:08:12 INFO  root:22 - Account 19 balance updated to $20.01
+2018-03-13 09:08:12 INFO  root:22 - $20 transfered from account 18 to account 19 by admin
+2018-03-13 09:08:21 INFO  root:22 - Account 19 balance updated to $19.01
+2018-03-13 09:08:21 INFO  root:22 - $1 withdrawn from account 19 by admin
+2018-03-13 09:16:00 INFO  root:22 - Admin admin has logged in.
+2018-03-13 09:20:51 INFO  root:22 - Customer jack has logged in.
+2018-03-13 10:25:45 INFO  root:22 - Customer lol has registered a new account.
+2018-03-13 10:25:55 INFO  root:22 - Customer lol has logged in.
+2018-03-13 10:26:45 INFO  root:22 - Admin admin has logged in.
+2018-03-13 10:27:56 INFO  root:22 - Account 23 balance updated to $1000.01
+2018-03-13 10:27:56 INFO  root:22 - $1000 deposited to account 23 by admin
+2018-03-13 10:28:32 INFO  root:22 - Account 23 balance updated to $900.01
+2018-03-13 10:28:33 INFO  root:22 - Account 22 balance updated to $100.01
+2018-03-13 10:28:33 INFO  root:22 - $100 transfered from account 23 to account 22 by admin
+2018-03-13 12:03:39 INFO  root:22 - Customer nick has registered a new account.
+2018-03-13 12:03:46 INFO  root:22 - Customer nick has logged in.
+2018-03-13 12:04:29 INFO  root:22 - Admin admin has logged in.
+2018-03-13 12:05:39 INFO  root:22 - Account 25 balance updated to $100.01
+2018-03-13 12:05:39 INFO  root:22 - $100 deposited to account 25 by admin
+2018-03-13 12:06:00 INFO  root:22 - Account 25 balance updated to $50.010000000000005
+2018-03-13 12:06:01 INFO  root:22 - Account 24 balance updated to $50.01
+2018-03-13 12:06:01 INFO  root:22 - $50 transfered from account 25 to account 24 by admin
