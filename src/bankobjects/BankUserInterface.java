@@ -281,62 +281,22 @@ public class BankUserInterface {
 				
 				if(option.equals("1")) {//approve account
 					
-					if(!data.getAccount().isEmpty()) {//if account list is not empty
-						
-						int newID = data.getAccount().get(data.getAccount().size()-1).getId()+1;
-						
-						for(int i=0 ; i<data.getApplication().get(0).getUsers().size() ; i++) {//goes through list of users in application
-							
-							User tempUser = new User("","");
-							
-							//goes through list of users to find the one with correct user name
-							for(int j=0 ; !tempUser.getUsername().equals(data.getApplication().get(0).getUsers().get(i)) ; j++) {
-								if(data.getUser().get(j).getUsername().equals(data.getApplication().get(0).getUsers().get(i))) {//once found, sets that user to the temp user
-									tempUser = data.getUser().get(j);
-									((Customer)tempUser).getOwnedAccounts().add(newID);
-								}
-							}
-							
-						}
-						
-						//adds new account to account list with id 1 higher than account with highest id and application's specified users
-						data.getAccount().add(new Account(newID, data.getApplication().get(0).getUsers()));
-						LoggingUtil.logInfo("Account " + newID + " created with account balance of $0.01.");
-						
-					}else {//if account list is empty
-						
-						int newID = 1000;
-						
-						for(int i=0 ; i<data.getApplication().get(0).getUsers().size() ; i++) {//goes through list of users in application
-							
-							User tempUser = new User("","");
-							
-							//goes through list of users to find the one with correct user name
-							for(int j=0 ; !tempUser.getUsername().equals(data.getApplication().get(0).getUsers().get(i)) ; j++) {
-								if(data.getUser().get(j).getUsername().equals(data.getApplication().get(0).getUsers().get(i))) {//once found, sets that user to the temp user
-									tempUser = data.getUser().get(j);
-									((Customer)tempUser).getOwnedAccounts().add(newID);
-								}
-							}
-							
-						}
-						//adds new account to account list with id of 1 and application's specified users
-						data.getAccount().add(new Account(1000, data.getApplication().get(0).getUsers()));
-						LoggingUtil.logInfo("Account " + newID + " created with account balance of $0.01.");
-					}
+					//creates new account with owner
+					AccountDao accd = new AccountDaoImpl();
+					accd.createAccount(app);
 					
 					//removes approved application from application list
-					data.getApplication().remove(0);
+					appd.removeNextApplication();
 					System.out.println("Application approved, returning to admin menu.");
 					adminMenu();
 					
 				}else if(option.equals("2")) { //deny account
 					//removes application from list of open applications
-					data.getApplication().remove(0);
+					appd.removeNextApplication();
 					System.out.println("Application denied, returning to admin menu.");
 					adminMenu();
-				}else { //return to employee menu
-					System.out.println("Returning to employee menu.");
+				}else { //return to admin menu
+					System.out.println("Returning to admin menu.");
 					adminMenu();
 				}
 				
@@ -362,8 +322,6 @@ public class BankUserInterface {
 			boolean amountParse = true;
 			boolean accountParse = true;
 			
-			double doubleAmount = 0;
-			
 			for(int i=0 ; i<amount.length() ; i++) {//check if amount can be converted to correctly formated double
 				if(!Character.isDigit(amount.charAt(i))) {//if current char is not a digit
 					if(amount.charAt(i)=='.' && i==amount.length()-3) {//if it is a '.' and in correct spot nothing happens
@@ -374,21 +332,19 @@ public class BankUserInterface {
 				}
 			}
 			
-			if(amountParse) {
-				doubleAmount = Double.parseDouble(amount);
-			}
-			
 			for(int j=0 ; j<account.length() ; j++) {
 				if(!Character.isDigit(account.charAt(j))) {//if current char is not a digit
 					accountParse = false;
 				}
 			}
 			
-			int index = -1 ;
+			Account acc = new Account();
+			AccountDao accd = new AccountDaoImpl();
 			
-			if(accountParse==true && account.length()<10) {
-				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account), null), new Account(0, null));
+			if(accountParse && amountParse) {
+				acc = accd.retrieveAccountById(Integer.parseInt(account));
 			}
+			
 			
 			if(amount.equals("0")) {//if admin menu is selected
 				System.out.println("Returning to admin menu.");
@@ -396,17 +352,17 @@ public class BankUserInterface {
 			}else if(amountParse==false) {//amount is not valid input
 				System.out.println("Sorry invalid amount entered or format is not correct, returning to admin menu.");
 				adminMenu();
-			}else if(index<0) {//if account id not found
+			}else if(acc.getId()==0) {//if account id not found
 				System.out.println("Sorry account id not found, returning to admin menu.");
 				adminMenu();
-			}else if(data.getAccount().get(index).negativeBalance(doubleAmount)) {//if not enough funds
+			}else if(acc.getBalance()-Double.parseDouble(amount)<0) {//if not enough funds
 				System.out.println("Sorry there is not have enough funds in this account, returning to admin menu.");
 				adminMenu();
 			}else if(amount.length() > 12){
 				System.out.println("Sorry we can not authorize transactions of this scale, returning to admin menu.");
 				adminMenu();
 			}else {//permitted access with sufficient funds
-				data.getAccount().get(index).withdraw(doubleAmount);
+				accd.updateAccount(acc.getId(), acc.getBalance()-Double.parseDouble(amount));
 				LoggingUtil.logInfo("$" + amount + " withdrawn from account " + account + " by " + currentUser.getUsername());
 				System.out.println("$" + amount + " withdrawn from account " + account + ", returning to admin menu.");
 				adminMenu();
@@ -429,8 +385,6 @@ public class BankUserInterface {
 			boolean amountParse = true;
 			boolean accountParse = true;
 			
-			double doubleAmount = 0;
-			
 			for(int i=0 ; i<amount.length() ; i++) {//check if amount can be converted to correctly formated double
 				if(!Character.isDigit(amount.charAt(i))) {//if current char is not a digit
 					if(amount.charAt(i)=='.' && i==amount.length()-3) {//if it is a '.' and in correct spot nothing happens
@@ -442,7 +396,7 @@ public class BankUserInterface {
 			}
 			
 			if(amountParse) {
-				doubleAmount = Double.parseDouble(amount);
+				Double.parseDouble(amount);
 			}
 			
 			for(int j=0 ; j<account.length() ; j++) {
@@ -451,10 +405,11 @@ public class BankUserInterface {
 				}
 			}
 			
-			int index = -1 ;
+			Account acc = new Account();
+			AccountDao accd = new AccountDaoImpl();
 			
-			if(accountParse==true && account.length()<10) {
-				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account), null), new Account(0, null));
+			if(accountParse && amountParse) {
+				acc = accd.retrieveAccountById(Integer.parseInt(account));
 			}
 			
 			if(amount.equals("0")) {//if admin menu is selected
@@ -463,14 +418,14 @@ public class BankUserInterface {
 			}else if(amountParse==false) {//amount is not valid input
 				System.out.println("Sorry invalid amount entered or format is not correct, returning to admin menu.");
 				adminMenu();
-			}else if(index<0) {//if account id not found
+			}else if(acc.getId()==0) {//if account id not found
 				System.out.println("Sorry account id not found, returning to admin menu.");
 				adminMenu();
 			}else if(amount.length() > 12){//value too high
 				System.out.println("Sorry we can not authorize transactions of this scale, returning to admin menu.");
 				adminMenu();
 			}else {//permitted access with sufficient funds
-				data.getAccount().get(index).deposit(doubleAmount);
+				accd.updateAccount(acc.getId(), acc.getBalance()+Double.parseDouble(amount));
 				LoggingUtil.logInfo("$" + amount + " deposited to account " + account + " by " + currentUser.getUsername());
 				System.out.println("$" + amount + " deposited to account " + account + ", returning to admin menu.");
 				adminMenu();
@@ -500,8 +455,6 @@ public class BankUserInterface {
 			boolean account1Parse = true;
 			boolean account2Parse = true;
 			
-			double doubleAmount = 0;
-			
 			for(int i=0 ; i<amount.length() ; i++) {//check if amount can be converted to correctly formated double
 				if(!Character.isDigit(amount.charAt(i))) {//if current char is not a digit
 					if(amount.charAt(i)=='.' && i==amount.length()-3) {//if it is a '.' and in correct spot nothing happens
@@ -513,7 +466,7 @@ public class BankUserInterface {
 			}
 			
 			if(amountParse) {
-				doubleAmount = Double.parseDouble(amount);
+				Double.parseDouble(amount);
 			}
 			
 			for(int j=0 ; j<account1.length() ; j++) {
@@ -528,14 +481,13 @@ public class BankUserInterface {
 				}
 			}
 			
-			int index1 = -1;
-			int index2 = -1;
+			Account acc1 = new Account();
+			Account acc2 = new Account();
+			AccountDao accd = new AccountDaoImpl();
 			
-			if(account1Parse==true && account1.length()<10) {//finds index of account 1 if parseable
-				index1 = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account1), null), new Account(0, null));
-			}
-			if(account2Parse==true && account2.length()<10) {//finds index of account 2 if parseable
-				index2 = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account2), null), new Account(0, null));
+			if(account1Parse && account2Parse && amountParse) {
+				acc1 = accd.retrieveAccountById(Integer.parseInt(account1));
+				acc2 = accd.retrieveAccountById(Integer.parseInt(account2));
 			}
 			
 			if(amount.equals("0")) {//if customer menu is selected
@@ -544,15 +496,18 @@ public class BankUserInterface {
 			}else if(amountParse==false) {//amount is not valid input
 				System.out.println("Sorry invalid amount entered or format is not correct, returning to admin menu.");
 				adminMenu();
-			}else if(index1<0 || index2<0) {//if account id not found
+			}else if(acc1.getId()==0 || acc2.getId()==0) {//if account id not found
 				System.out.println("Sorry one or more account ids not found, returning to admin menu.");
 				adminMenu();
 			}else if(amount.length() > 12){//value too high
 				System.out.println("Sorry we can not authorize transactions of this scale, returning to admin menu.");
 				adminMenu();
+			}else if(acc1.getBalance()-Double.parseDouble(amount)<0) {
+				System.out.println("Sorry account " + acc1.getId() + " does not have enough funds, returning to admin menu.");
+				adminMenu();
 			}else {//permitted access with sufficient funds
-				data.getAccount().get(index1).withdraw(doubleAmount);
-				data.getAccount().get(index2).deposit(doubleAmount);
+				accd.updateAccount(acc1.getId(), acc1.getBalance()-Double.parseDouble(amount));
+				accd.updateAccount(acc2.getId(), acc2.getBalance()+Double.parseDouble(amount));
 				LoggingUtil.logInfo("$" + amount + " transfered from account " + account1 + " to account " + account2 + " by " + currentUser.getUsername());
 				System.out.println("$" + amount + " transfered from account " + account1 + " to account " + account2 + ", returning to admin menu.");
 				adminMenu();
@@ -574,36 +529,22 @@ public class BankUserInterface {
 				}
 			}
 			
-			int index = -1;
+			Account acc = new Account();
+			AccountDao accd = new AccountDaoImpl();
 			
-			if(parseable==true) {//if parseable, binary search for account index
-				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(account), null), new Account(0, null));
+			if(parseable) {
+				acc = accd.retrieveAccountById(Integer.parseInt(account));
 			}
 			
 			if(account.equals("0")) {//if returning to admin menu was selected
 				System.out.println("Returning to admin menu.");
 				adminMenu();
-			}else if(index<0){//if account not found
+			}else if(acc.getId()==0){//if account not found
 				System.out.println("Account not found, returning to admin menu.");
 				adminMenu();
 			}else {
 				
-				String ownerName = "";
-				User ownerUser = new User("","");
-				for(int i=0 ; i<data.getAccount().get(index).getOwners().size() ; i++) {//go through list of accounts owners
-					
-					//set target name to the current account owner's name
-					ownerName = data.getAccount().get(index).getOwners().get(i);
-					for(int j=0 ; !ownerUser.getUsername().equals(ownerName) ; j++) {//traverses list of users until finds the one with correct user name
-						if(data.getUser().get(j).getUsername().equals(ownerName)) {//if current user has correct user name
-							//remove account id from the owner's list of accounts owned and sets moves to next account owner
-							Integer targetInt = new Integer(data.getAccount().get(index).getId());
-							((Customer)data.getUser().get(j)).getOwnedAccounts().remove((Object)targetInt);
-							ownerUser = data.getUser().get(j);
-						}
-					}
-				}
-				data.getAccount().remove(index);
+				accd.deleteAccount(acc.getId());
 				LoggingUtil.logInfo("Account " + account + " deleted.");
 				System.out.println("Account ID " + account + " deleted, returning to admin menu.");
 				adminMenu();
@@ -611,12 +552,13 @@ public class BankUserInterface {
 			
 		}else if(choice.equals("7")) {//all customers
 			
+			UserDao userd = new UserDaoImpl();
+			List<String> users = userd.retrieveAllUser();
+			
 			System.out.println("Registered Customers\n==============================");
 			
-			for(User u: data.getUser()) {
-				if(u instanceof Customer) {
-					System.out.println(u.getUsername());
-				}
+			for(String s: users) {
+				System.out.println(s);
 			}
 			
 			System.out.println("==============================\nEnter anything to continue to previous menu.");
@@ -625,10 +567,13 @@ public class BankUserInterface {
 			
 		}else if(choice.equals("8")) {//view all accounts
 			
+			AccountDao accd = new AccountDaoImpl();
+			List<Integer> accs = accd.retrieveAllAccount();
+			
 			System.out.println("Active Account IDs\n==============================");
 			
-			for(Account a: data.getAccount()) {
-				System.out.println(a.getId());
+			for(int i: accs) {
+				System.out.println(i);
 			}
 			
 			System.out.println("==============================\nEnter anything to continue to previous menu.");
@@ -666,19 +611,17 @@ public class BankUserInterface {
 				customerName = scanner.nextLine();
 			}
 			
-			if(data.getLoginInfo().containsKey(customerName)) {//if user name is a valid user
+			UserDao userd = new UserDaoImpl();
+			User user=userd.retrieveUserByName(customerName);
+			
+			if(!user.getUsername().equals("")) {//if user name is a valid user
 				
-				User tempUser = new User("","");
+				
 				
 				//goes through list of users to find the one with correct user name
-				for(int i=0 ; !tempUser.getUsername().equals(customerName) ; i++) {
-					if(data.getUser().get(i).getUsername().equals(customerName)) {//once found, sets that user to the temp user
-						tempUser = data.getUser().get(i);
-					}
-				}
 				
-				if(tempUser instanceof Customer) {//if specified user is a customer, print info
-					((Customer)tempUser).printInfo();
+				if(user instanceof Customer) {//if specified user is a customer, print info
+					((Customer)user).printInfo();
 					System.out.println("Enter anything to continue to employee menu.");
 					scanner.nextLine();
 					System.out.println("Returning to employee menu.");
@@ -694,13 +637,11 @@ public class BankUserInterface {
 			}
 			
 		}else if(choice.equals("2")) {//View Account Info
-			System.out.println("Please enter the ID of the account whose info you want to view or enter \"menu\" to return to employee menu.");
+			System.out.println("Please enter the ID of the account whose info you want to view.");
 			String accountID = scanner.nextLine();
-			
 			while(accountID.length()==0) {
 				accountID = scanner.nextLine();
 			}
-			
 			boolean accountParse = true;
 			
 			for(int j=0 ; j<accountID.length() ; j++) {
@@ -709,16 +650,18 @@ public class BankUserInterface {
 				}
 			}
 			
-			int index = -1;
+			AccountDao accd = new AccountDaoImpl();
+			Account acc = new Account();
+			
 			if(accountParse==true && accountID.length()<10) {
-				index = Collections.binarySearch(data.getAccount(), new Account(Integer.parseInt(accountID), null), new Account(0, null));
+				acc = accd.retrieveAccountById(Integer.parseInt(accountID));
 			}
 			
-			if(index<0) {
+			if(acc.getId()==0) {
 				System.out.println("Specified account does not exist, we are now returning to employee menu.");
 				employeeMenu();
 			}else {
-				data.getAccount().get(index).printInfo();
+				acc.printInfo();
 				System.out.println("Enter anything to continue to employee menu.");
 				scanner.nextLine();
 				System.out.println("Returning to employee menu.");
@@ -726,10 +669,14 @@ public class BankUserInterface {
 			}
 			
 		}else if(choice.equals("3")) {//View Account Applications
-			if(!data.getApplication().isEmpty()) {
+			
+			ApplicationDao appd = new ApplicationDaoImpl();
+			Application app = appd.retrieveNextApp();
+			
+			if(!app.getUsers().isEmpty()) {//if there is a application
 				
 				//prints out oldest application and prompts for an action
-				data.getApplication().get(0).printInfo();
+				app.printInfo();
 				String option = scanner.nextLine();
 				
 				//if input is invalid, prompts for input until it is valid
@@ -740,55 +687,18 @@ public class BankUserInterface {
 				
 				if(option.equals("1")) {//approve account
 					
-					if(!data.getAccount().isEmpty()) {//if account list is not empty
-						int newID = data.getAccount().get(data.getAccount().size()-1).getId()+1;
-						
-						for(int i=0 ; i<data.getApplication().get(0).getUsers().size() ; i++) {//goes through list of users in application
-							
-							User tempUser = new User("","");
-							
-							//goes through list of users to find the one with correct user name
-							for(int j=0 ; !tempUser.getUsername().equals(data.getApplication().get(0).getUsers().get(i)) ; j++) {
-								if(data.getUser().get(j).getUsername().equals(data.getApplication().get(0).getUsers().get(i))) {//once found, sets that user to the temp user
-									tempUser = data.getUser().get(j);
-									((Customer)tempUser).getOwnedAccounts().add(newID);
-								}
-							}
-							
-						}
-						//adds new account to account list with id 1 higher than account with highest id and application's specified users
-						data.getAccount().add(new Account(newID, data.getApplication().get(0).getUsers()));
-						LoggingUtil.logInfo("Account " + newID + " created with account balance of $0.01.");
-					}else {//if account list is empty
-						
-						//adds new account to account list with id of 1 and application's specified users
-						int newID = 1000;
-						
-						for(int i=0 ; i<data.getApplication().get(0).getUsers().size() ; i++) {//goes through list of users in application
-							
-							User tempUser = new User("","");
-							
-							//goes through list of users to find the one with correct user name
-							for(int j=0 ; !tempUser.getUsername().equals(data.getApplication().get(0).getUsers().get(i)) ; j++) {
-								if(data.getUser().get(j).getUsername().equals(data.getApplication().get(0).getUsers().get(i))) {//once found, sets that user to the temp user
-									tempUser = data.getUser().get(j);
-									((Customer)tempUser).getOwnedAccounts().add(newID);
-								}
-							}
-							
-						}
-						data.getAccount().add(new Account(1000, data.getApplication().get(0).getUsers()));
-						LoggingUtil.logInfo("Account " + newID + " created with account balance of $0.01.");
-					}
+					//creates new account with owner
+					AccountDao accd = new AccountDaoImpl();
+					accd.createAccount(app);
 					
 					//removes approved application from application list
-					data.getApplication().remove(0);
+					appd.removeNextApplication();
 					System.out.println("Application approved, returning to employee menu.");
 					employeeMenu();
 					
 				}else if(option.equals("2")) { //deny account
 					//removes application from list of open applications
-					data.getApplication().remove(0);
+					appd.removeNextApplication();
 					System.out.println("Application denied, returning to employee menu.");
 					employeeMenu();
 				}else { //return to employee menu
@@ -837,17 +747,19 @@ public class BankUserInterface {
 				accountType = scanner.nextLine();
 			}
 			
+			List<String> owners = new LinkedList<>();
+			owners.add(currentUser.getUsername());
+			ApplicationDao appd = new ApplicationDaoImpl();
+			
+			
 			if(accountType.equals("1")) {//if applied for individual account
 				
-				Application tempApp = new Application(currentUser.getUsername());
-				data.getApplication().add(tempApp);
+				appd.createApplication(new Application(owners));
 				System.out.println("You have sucessfully applied for an account, we are now returning to customer menu.");
 				customerMenu();
 				
 			}else if(accountType.equals("2")) {//applying for joint account
 				
-				List<String> otherOwners = new LinkedList<>();
-				otherOwners.add(currentUser.getUsername());
 				String jointOwners = "";
 				
 				while(!jointOwners.equals("0")) {
@@ -859,22 +771,18 @@ public class BankUserInterface {
 						jointOwners = scanner.nextLine();
 					}
 					
-					if(data.getLoginInfo().containsKey(jointOwners)) {//if exiting user name is entered
+					
+					UserDao userd = new UserDaoImpl();
+					User user = userd.retrieveUserByName(jointOwners);
+					
+					if(!user.getUsername().equals("")) {//if exiting user name is entered						
 						
-						//goes through list of users to find the one with correct user name
-						User tempUser = new User("","");
-						for(int i=0 ; !tempUser.getUsername().equals(jointOwners) ; i++) {
-							if(data.getUser().get(i).getUsername().equals(jointOwners)) {//once found, sets that user to the temp user
-								tempUser = data.getUser().get(i);
-							}
-						}						
-						
-						if(otherOwners.contains(jointOwners)) {//if entered user name has previously been added already							
+						if(owners.contains(jointOwners)) {//if entered user name has previously been added already							
 							System.out.println("The user you have entered has already been added previously.");
-						}else if(tempUser instanceof Admin || tempUser instanceof Employee){//if entered user is an admin or employee
+						}else if(user instanceof Admin || user instanceof Employee){//if entered user is an admin or employee
 							System.out.println("Sorry target user cannot own an account.");
 						}else {//valid customer's user name
-							otherOwners.add(jointOwners);
+							owners.add(jointOwners);
 							System.out.println("You have added " + jointOwners + " to the joint application.");
 						}
 
@@ -884,8 +792,7 @@ public class BankUserInterface {
 				}
 					
 				//creates application with current user's user name and all other previously entered user names
-				Application tempApp = new Application(otherOwners);
-				data.getApplication().add(tempApp);
+				appd.createApplication(new Application(owners));
 				System.out.println("You have sucessfully applied for an account, we are now returning to customer menu.");
 				customerMenu();
 				

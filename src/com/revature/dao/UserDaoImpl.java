@@ -1,5 +1,6 @@
 package com.revature.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,9 +23,12 @@ public class UserDaoImpl implements UserDao {
 		
 		try {
 			
-			PreparedStatement ps = ConnectionFactory.getInstance().getConnection().prepareStatement(sql);
-			
+			Connection conn = ConnectionFactory.getInstance().getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.executeUpdate(sql);
+			
+			ps.close();
+			conn.close();
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -40,8 +44,8 @@ public class UserDaoImpl implements UserDao {
 		String sql = "SELECT * FROM USERS WHERE USERNAME = ?";
 		
 		try {
-			PreparedStatement ps = 
-					ConnectionFactory.getInstance().getConnection().prepareStatement(sql);
+			Connection conn = ConnectionFactory.getInstance().getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, username);
 			
 			ResultSet rs = ps.executeQuery();
@@ -58,6 +62,10 @@ public class UserDaoImpl implements UserDao {
 				
 			}
 			
+			rs.close();
+			ps.close();
+			conn.close();
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -69,11 +77,11 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public List<String> retrieveAllUser() {
 		// TODO Auto-generated method stub
-		String sql = "SELECT USERNAME FROM USERS";
+		String sql = "SELECT USERNAME FROM USERS WHERE TYPEID = 1";
 		List<String> users = new LinkedList<>();
 		try {
-			PreparedStatement ps = ConnectionFactory.getInstance().getConnection().prepareStatement(sql);
-			
+			Connection conn = ConnectionFactory.getInstance().getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			
 			
@@ -82,6 +90,10 @@ public class UserDaoImpl implements UserDao {
 				users.add(rs.getString(1));
 				
 			}
+			
+			rs.close();
+			ps.close();
+			conn.close();
 			
 		}catch (SQLException e) {
 			// TODO Auto-generated catch block

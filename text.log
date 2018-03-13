@@ -68,3 +68,60 @@
 2018-03-12 16:52:24 INFO  root:22 - Customer customer has logged in.
 2018-03-12 16:52:34 INFO  root:22 - Admin admin has logged in.
 2018-03-12 16:52:46 INFO  root:22 - Employee employee has logged in.
+2018-03-12 18:14:12 INFO  root:22 - Customer jack has logged in.
+2018-03-12 18:15:38 INFO  root:22 - Customer jack has logged in.
+2018-03-12 18:16:45 INFO  root:22 - Customer jack has logged in.
+2018-03-12 18:18:13 INFO  root:22 - Admin admin has logged in.
+2018-03-12 18:23:01 INFO  root:22 - Admin admin has logged in.
+2018-03-12 18:28:31 INFO  root:22 - Admin admin has logged in.
+2018-03-12 18:30:40 INFO  root:22 - Admin admin has logged in.
+2018-03-12 18:32:15 INFO  root:22 - Admin admin has logged in.
+2018-03-12 18:33:27 INFO  root:22 - Admin admin has logged in.
+2018-03-12 18:34:08 INFO  root:22 - Admin admin has logged in.
+2018-03-12 18:39:56 INFO  root:22 - Admin admin has logged in.
+2018-03-12 18:41:05 INFO  root:22 - Admin admin has logged in.
+2018-03-12 18:41:51 INFO  root:22 - Customer jack has logged in.
+2018-03-12 18:42:16 INFO  root:22 - Admin admin has logged in.
+2018-03-12 18:50:40 INFO  root:22 - Admin admin has logged in.
+2018-03-12 18:55:27 INFO  root:22 - Admin admin has logged in.
+2018-03-12 23:49:59 INFO  root:22 - Admin admin has logged in.
+2018-03-12 23:50:24 INFO  root:22 - $.01 withdrawn from account 14 by admin
+2018-03-12 23:56:48 INFO  root:22 - Account 14 balance updated to $0.0
+2018-03-12 23:56:48 INFO  root:22 - $.01 withdrawn from account 14 by admin
+2018-03-13 00:05:29 INFO  root:22 - Admin admin has logged in.
+2018-03-13 00:06:03 INFO  root:22 - Account 14 balance updated to $1000.0
+2018-03-13 00:06:03 INFO  root:22 - $1000 deposited to account 14 by admin
+2018-03-13 00:06:44 INFO  root:22 - Account 14 balance updated to $499.99
+2018-03-13 00:06:45 INFO  root:22 - Account 15 balance updated to $500.02
+2018-03-13 00:06:45 INFO  root:22 - $500.01 transfered from account 14 to account 15 by admin
+2018-03-13 00:38:34 INFO  root:22 - Admin admin has logged in.
+2018-03-13 00:38:50 INFO  root:22 - Account 14 balance updated to $599.99
+2018-03-13 00:38:50 INFO  root:22 - $100 deposited to account 14 by admin
+2018-03-13 00:39:01 INFO  root:22 - Account 14 balance updated to $598.99
+2018-03-13 00:39:01 INFO  root:22 - Account 15 balance updated to $501.02
+2018-03-13 00:39:01 INFO  root:22 - $1 transfered from account 14 to account 15 by admin
+2018-03-13 00:46:43 INFO  root:22 - Admin admin has logged in.
+2018-03-13 00:46:59 INFO  root:22 - Account 15 balance updated to $513.02
+2018-03-13 00:46:59 INFO  root:22 - $12 deposited to account 15 by admin
+2018-03-13 00:47:18 INFO  root:22 - Account 15 balance updated to $413.02
+2018-03-13 00:47:19 INFO  root:22 - Account 14 balance updated to $698.99
+2018-03-13 00:47:19 INFO  root:22 - $100 transfered from account 15 to account 14 by admin
+2018-03-13 00:50:38 INFO  root:22 - Admin admin has logged in.
+2018-03-13 00:50:48 INFO  root:22 - $12 withdrawn from account 14 by admin
+2018-03-13 00:52:27 INFO  root:22 - Admin admin has logged in.
+2018-03-13 00:52:34 INFO  root:22 - Account 14 balance updated to $684.99
+2018-03-13 00:52:34 INFO  root:22 - $14 withdrawn from account 14 by admin
+2018-03-13 00:52:42 INFO  root:22 - Account 15 balance updated to $403.02
+2018-03-13 00:52:43 INFO  root:22 - Account 14 balance updated to $694.99
+2018-03-13 00:52:43 INFO  root:22 - $10 transfered from account 15 to account 14 by admin
+2018-03-13 01:22:35 INFO  root:22 - Customer pop has registered a new account.
+2018-03-13 01:22:40 INFO  root:22 - Customer pop has logged in.
+2018-03-13 01:23:20 INFO  root:22 - Admin admin has logged in.
+2018-03-13 01:24:45 INFO  root:22 - Account 17 balance updated to $10000.01
+2018-03-13 01:24:45 INFO  root:22 - $10000 deposited to account 17 by admin
+2018-03-13 01:28:58 INFO  root:22 - Admin admin has logged in.
+2018-03-13 01:29:15 INFO  root:22 - Account 17 deleted.
+2018-03-13 01:30:35 INFO  root:22 - Admin admin has logged in.
+2018-03-13 01:30:54 INFO  root:22 - Account 17 deleted
+2018-03-13 01:30:54 INFO  root:22 - Account 17 deleted.
+2018-03-13 01:46:34 INFO  root:22 - Customer jack has logged in.

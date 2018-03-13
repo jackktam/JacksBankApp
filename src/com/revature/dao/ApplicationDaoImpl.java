@@ -23,19 +23,24 @@ public class ApplicationDaoImpl implements ApplicationDao {
 		int aId=0;
 		
 		try {
-			PreparedStatement ps = ConnectionFactory.getInstance().getConnection().prepareStatement(sql1);
+			PreparedStatement ps = conn.prepareStatement(sql1);
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()){	
 				aId = rs.getInt(1);
 			}
 			
+			rs.close();
+			
 			for(String s: application.getUsers()) {
-				sql2 = "INSERT INTO APP (APPID, USERID) VALUES("+String.valueOf(aId)+ ", '" +s+"')";
-				PreparedStatement ps2 = conn.prepareStatement(sql2);
-				ps2.executeUpdate();
+				sql2 = "INSERT INTO APP (APPID, USERNAME) VALUES("+String.valueOf(aId)+ ", '" +s+"')";
+				ps = conn.prepareStatement(sql2);
+				ps.executeUpdate();
+				ps.close();
 			}
-		
+			
+			ps.close();
+			conn.close();
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -50,14 +55,18 @@ public class ApplicationDaoImpl implements ApplicationDao {
 		List<String> owners = new LinkedList<>();
 		String sql = "SELECT USERNAME FROM APP WHERE APPID = (SELECT MIN(APPID) FROM APP)";
 		
-		PreparedStatement ps;
 		try {
-			ps = ConnectionFactory.getInstance().getConnection().prepareStatement(sql);
+			Connection conn = ConnectionFactory.getInstance().getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 		
 			while(rs.next()){	
 				owners.add(rs.getString(1));
 			}
+			
+			ps.close();
+			rs.close();
+			conn.close();
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -72,13 +81,17 @@ public class ApplicationDaoImpl implements ApplicationDao {
 
 
 	@Override
-	public void denyNextApplication() {
+	public void removeNextApplication() {
 		// TODO Auto-generated method stub
-		String sql = "DELETE FROM APPLICATION WHERE APPID = (SELECT MIN(APPID) FROM APPLICATION)";
+		String sql = "DELETE FROM APP WHERE APPID = (SELECT MIN(APPID) FROM APP)";
 		
 		try {
-			PreparedStatement ps = ConnectionFactory.getInstance().getConnection().prepareStatement(sql);
-			ps.executeUpdate();		
+			Connection conn = ConnectionFactory.getInstance().getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.executeUpdate();	
+			
+			ps.close();
+			conn.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

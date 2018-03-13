@@ -8,5 +8,5 @@ public interface ApplicationDao {
 	
 	public Application retrieveNextApp();
 	
-	public void denyNextApplication();
+	public void removeNextApplication();
 }

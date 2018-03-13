@@ -1,5 +1,6 @@
 package com.revature.dao;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,12 +33,23 @@ public class AccountDaoImpl implements AccountDao {
 				aId = rs.getInt(1);
 			}
 			
+			String sql = "INSERT INTO ACCOUNTS(ACCOUNTID, BALANCE) VALUES(?, 0.01)";
+			ps = conn.prepareStatement(sql);
+		    ps.setInt(1, aId);
+		    ps.executeUpdate();
+		    
+			
 			for(String s: app.getUsers()) {
-				sql2 = "INSERT INTO CUSTOMERACCOUNT (USERNAME, ACCOUNTID) VALUES("+s+ ", '" +String.valueOf(aId)+"')";
-				PreparedStatement ps2 = conn.prepareStatement(sql2);
-				ps2.executeUpdate();
+				sql2 = "INSERT INTO CUSTOMERACCOUNT(USERNAME, ACCOUNTID) VALUES(?, ?) ";
+				ps = conn.prepareStatement(sql2);
+				ps.setString(1, s);
+				ps.setInt(2, aId);
+				ps.executeUpdate();
 			}
-		
+			
+			ps.close();
+			rs.close();
+			conn.close();
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -51,22 +63,24 @@ public class AccountDaoImpl implements AccountDao {
 		Account account = new Account();
 		
 		String sql = "SELECT * FROM ACCOUNTS WHERE ACCOUNTID = ?";
-		String sq2 = "SELECT USERNAME FROM USER WHERE USERID IN (SELECT USERID FROM CUSTOMERACCOUNT WHERE ACCOUNTID = ?";
+		String sq2 = "SELECT USERNAME FROM CUSTOMERACCOUNT WHERE ACCOUNTID = ? ";
 		
 		try {
-			PreparedStatement ps = ConnectionFactory.getInstance().getConnection().prepareStatement(sql);
+			Connection conn = ConnectionFactory.getInstance().getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, id);
 			
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()){
-				
 				account.setId(rs.getInt(1));
 				account.setBalance(Double.parseDouble(rs.getString(2)));
-				
 			}
 			
-			PreparedStatement ps2 = ConnectionFactory.getInstance().getConnection().prepareStatement(sq2);
+			ps.close();
+			rs.close();
+			
+			PreparedStatement ps2 = conn.prepareStatement(sq2);
 			ps2.setInt(1, id);
 			
 			ResultSet rs2 = ps2.executeQuery();
@@ -77,6 +91,10 @@ public class AccountDaoImpl implements AccountDao {
 				owners.add(rs2.getString(1));
 				
 			}
+			
+			ps2.close();
+			rs2.close();
+			conn.close();
 			
 			account.setOwners(owners);
 			
@@ -94,16 +112,18 @@ public class AccountDaoImpl implements AccountDao {
 		String sql = "SELECT ACCOUNTID FROM ACCOUNTS";
 		List<Integer> accounts = new LinkedList<>();
 		try {
-			PreparedStatement ps = ConnectionFactory.getInstance().getConnection().prepareStatement(sql);
+			Connection conn = ConnectionFactory.getInstance().getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
 			
 			ResultSet rs = ps.executeQuery();
 			
-			
 			while(rs.next()){
-				
 				accounts.add(rs.getInt(1));
-				
 			}
+			
+			ps.close();
+			rs.close();
+			conn.close();
 			
 		}catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -117,8 +137,8 @@ public class AccountDaoImpl implements AccountDao {
 	public void updateAccount(int id, double balance) {
 		// TODO Auto-generated method stub
 		 
-		Connection conn = ConnectionFactory.getInstance().getConnection();
 		try {
+			Connection conn = ConnectionFactory.getInstance().getConnection();
 			Statement statement = conn.createStatement();
 			
 			String sql = "UPDATE ACCOUNTS SET BALANCE = " + String.valueOf(balance) + " WHERE ACCOUNTID =" + String.valueOf(id);
@@ -127,24 +147,31 @@ public class AccountDaoImpl implements AccountDao {
 			
 			LoggingUtil.logInfo("Account " + id + " balance updated to $" + balance);
 			
+			statement.close();
+			conn.close();
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 
 	@Override
 	public void deleteAccount(int id) {
 		// TODO Auto-generated method stub
-		Connection conn = ConnectionFactory.getInstance().getConnection();
+		String sql = "CALL DELETEACCOUNT(?) ";
 		try {
-			Statement statement = conn.createStatement();
+			Connection conn = ConnectionFactory.getInstance().getConnection();
+			CallableStatement call = conn.prepareCall(sql);
+			call.setInt(1, id);
 			
-			String sql = "DELETE FROM ACCOUNTS WHERE ACCOUNTID = " + String.valueOf(id);
-			
-			statement.executeQuery(sql);
+			call.execute();
 			
 			LoggingUtil.logInfo("Account " + id + " deleted");
+			
+			call.close();
+			conn.close();
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
